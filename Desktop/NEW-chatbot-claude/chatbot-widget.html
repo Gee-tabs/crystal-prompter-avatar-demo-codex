@@ -382,6 +382,16 @@ body{
 }
 .p-send:hover{background:linear-gradient(145deg,var(--teal-mid),var(--teal-deep));transform:scale(1.07);box-shadow:0 5px 18px rgba(26,138,114,.5)}
 .p-send:active{transform:scale(.93)}
+.p-icon-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--teal-light);border:1.5px solid var(--border);
+  color:var(--teal-dark);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .18s;
+}
+.p-icon-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal);transform:scale(1.07)}
+.p-icon-btn:active{transform:scale(.93)}
+.p-icon-btn.active{background:var(--teal);color:#fff;border-color:var(--teal-dark)}
 
 /* ── Mobile ─────────────────────────────── */
 @media(max-width:500px){
@@ -456,19 +466,19 @@ body{
       <!-- Tab nav (5 stacked buttons) -->
       <div class="tb-nav" role="tablist">
         <button class="tb-btn active" id="tab-text"   role="tab" aria-selected="true"  onclick="openTab('text')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Product Introduction
+          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Product Overview
         </button>
         <button class="tb-btn"        id="tab-photos" role="tab" aria-selected="false" onclick="openTab('photos')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span> Photos
+          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span> Product Gallery
         </button>
         <button class="tb-btn"        id="tab-slides" role="tab" aria-selected="false" onclick="openTab('slides')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span> Slides
+          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span> Watch Videos
         </button>
         <button class="tb-btn"        id="tab-videos" role="tab" aria-selected="false" onclick="openTab('videos')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span> Videos
+          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span> 3D View
         </button>
         <button class="tb-btn"        id="tab-model"  role="tab" aria-selected="false" onclick="openTab('model')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span> 3D Model
+          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span> Price Guide
         </button>
       </div>
 
@@ -513,35 +523,8 @@ body{
           </div>
         </div>
 
-        <!-- ─ Slides Content ─ -->
+        <!-- ─ Watch Videos Content ─ -->
         <div class="tb-content" id="ct-slides" role="tabpanel">
-          <div class="sl-wrap">
-            <div class="sl-slide active" id="sl-1">
-              <h3>Slide 1 — Introduction</h3>
-              <p>Welcome to Crystal Prompter. This walkthrough covers our core features and how to get the most out of your AI assistant experience from day one.</p>
-            </div>
-            <div class="sl-slide" id="sl-2">
-              <h3>Slide 2 — Key Features</h3>
-              <p>• Smart tab navigation<br>• Keyword-based routing<br>• Real-time responses<br>• Zero-latency animations<br>• Mobile-first design</p>
-            </div>
-            <div class="sl-slide" id="sl-3">
-              <h3>Slide 3 — Use Cases</h3>
-              <p>Customer support, internal knowledge bases, e-commerce guidance, user onboarding flows, and interactive educational tools.</p>
-            </div>
-            <div class="sl-slide" id="sl-4">
-              <h3>Slide 4 — Pricing</h3>
-              <p>Starter: Free &nbsp;·&nbsp; Pro: $19/mo &nbsp;·&nbsp; Enterprise: Custom.<br>All plans include core AI features and 99.9% uptime SLA.</p>
-            </div>
-          </div>
-          <div class="sl-nav">
-            <button class="sl-btn" onclick="prevSlide()">← Prev</button>
-            <span class="sl-count" id="sl-counter">1 / 4</span>
-            <button class="sl-btn" onclick="nextSlide()">Next →</button>
-          </div>
-        </div>
-
-        <!-- ─ Videos Content ─ -->
-        <div class="tb-content" id="ct-videos" role="tabpanel">
           <div class="vd-list">
             <div class="vd-card">
               <div class="vd-thumb" style="--c1:#1a8a72;--c2:#0d5e4e">▶️</div>
@@ -562,8 +545,8 @@ body{
           </div>
         </div>
 
-        <!-- ─ 3D Model Content ─ -->
-        <div class="tb-content" id="ct-model" role="tabpanel">
+        <!-- ─ 3D View Content ─ -->
+        <div class="tb-content" id="ct-videos" role="tabpanel">
           <div class="md-viewer">
             <div class="cube" id="cube">
               <div class="face fr"></div>
@@ -587,6 +570,23 @@ body{
             <div class="sp-row"><span class="sp-k">File Size</span><span class="sp-v">3.2 MB</span></div>
             <div class="sp-row"><span class="sp-k">License</span><span class="sp-v">Commercial</span></div>
           </div>
+        </div>
+
+        <!-- ─ Price Guide Content ─ -->
+        <div class="tb-content" id="ct-model" role="tabpanel">
+          <div class="md-specs" style="margin-top:8px">
+            <div class="sp-row" style="font-weight:700;font-size:13px;color:var(--teal-dark)"><span class="sp-k">Plan</span><span class="sp-v">Price</span></div>
+            <div class="sp-row"><span class="sp-k">Starter</span><span class="sp-v">Free</span></div>
+            <div class="sp-row"><span class="sp-k">Pro</span><span class="sp-v">$19 / mo</span></div>
+            <div class="sp-row"><span class="sp-k">Business</span><span class="sp-v">$49 / mo</span></div>
+            <div class="sp-row"><span class="sp-k">Enterprise</span><span class="sp-v">Custom</span></div>
+          </div>
+          <div class="tc-tags" style="margin-top:12px">
+            <span class="tc-tag">No Credit Card</span>
+            <span class="tc-tag">Cancel Anytime</span>
+            <span class="tc-tag">99.9% Uptime SLA</span>
+          </div>
+          <p class="tc-p" style="margin-top:10px;font-size:12px;color:var(--text-mute)">All plans include core AI features, multilingual support, and priority chat assistance.</p>
         </div>
 
       </div><!-- .tb-area -->
@@ -619,6 +619,20 @@ body{
         <polygon points="22 2 15 22 11 13 2 9 22 2"/>
       </svg>
     </button>
+    <button class="p-icon-btn" id="micBtn" onclick="toggleMic()" aria-label="Toggle microphone">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="2" width="6" height="11" rx="3"/>
+        <path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/>
+      </svg>
+    </button>
+    <button class="p-icon-btn" id="speakerBtn" onclick="toggleSpeaker()" aria-label="Toggle speaker">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+      </svg>
+    </button>
   </div>
 
 </div><!-- #panel -->
@@ -627,6 +641,15 @@ body{
 // ════════════════════════════════════════════
 //  Panel open / close
 // ════════════════════════════════════════════
+function toggleMic(){
+  const btn = document.getElementById('micBtn');
+  btn.classList.toggle('active');
+}
+function toggleSpeaker(){
+  const btn = document.getElementById('speakerBtn');
+  btn.classList.toggle('active');
+}
+
 function togglePanel(){
   document.getElementById('panel').classList.contains('open') ? closePanel() : openPanel();
 }
