@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/Desktop/NEW-chatbot-claude/chatbot-widget.html" },
+    { "source": "/:file", "destination": "/Desktop/NEW-chatbot-claude/:file" }
+  ]
+}
