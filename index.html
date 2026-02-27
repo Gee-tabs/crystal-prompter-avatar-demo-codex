@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrystalPrompter — Professional Teleprompter Solutions</title>
+  <style>
+    /* ── RESET ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #1e40af;
+      color: #1a2744;
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       DEMO PAGE — blue gradient + organic blobs
+    ══════════════════════════════════════════════════════════ */
+    .demo-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,18,56,0.9);
+      backdrop-filter: blur(14px);
+      padding: 0 40px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .demo-nav .brand { font-size: 21px; font-weight: 800; color: #fff; }
+    .demo-nav .brand span { color: #60a5fa; }
+    .demo-nav ul { list-style: none; display: flex; gap: 28px; }
+    .demo-nav ul a {
+      color: rgba(255,255,255,0.75); text-decoration: none;
+      font-size: 14px; font-weight: 500; transition: color 0.2s;
+    }
+    .demo-nav ul a:hover { color: #fff; }
+    .demo-nav .nav-cta {
+      background: #3b82f6; color: #fff !important;
+      font-weight: 700 !important; padding: 7px 18px;
+      border-radius: 7px;
+    }
+
+    .demo-hero {
+      min-height: calc(100vh - 60px);
+      background: linear-gradient(148deg, #1e3a8a 0%, #1d4ed8 45%, #3b82f6 100%);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 60px 24px;
+      position: relative; overflow: hidden;
+    }
+    /* Organic blob shapes */
+    .blob {
+      position: absolute; border-radius: 60% 40% 70% 30% / 50% 60% 40% 70%;
+      pointer-events: none;
+    }
+    .blob-1 {
+      width: 540px; height: 440px;
+      background: rgba(59,130,246,0.25);
+      bottom: -110px; left: -130px;
+      border-radius: 70% 30% 55% 45% / 40% 65% 35% 60%;
+    }
+    .blob-2 {
+      width: 400px; height: 330px;
+      background: rgba(37,99,235,0.2);
+      top: -70px; right: 80px;
+      border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%;
+    }
+    .blob-3 {
+      width: 300px; height: 260px;
+      background: rgba(96,165,250,0.15);
+      bottom: 60px; right: 460px;
+      border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%;
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 700px; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.22);
+      color: #bfdbfe; font-size: 12px; font-weight: 700;
+      padding: 5px 16px; border-radius: 20px; margin-bottom: 26px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .demo-hero h1 {
+      font-size: clamp(36px, 5vw, 64px); font-weight: 900;
+      color: #fff; line-height: 1.08; margin-bottom: 20px; letter-spacing: -1.5px;
+    }
+    .demo-hero h1 em { color: #93c5fd; font-style: normal; }
+    .demo-hero p {
+      font-size: 17px; color: rgba(255,255,255,0.68);
+      line-height: 1.65; margin-bottom: 36px; max-width: 520px; margin-inline: auto;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-p {
+      background: #fff; color: #1e3a8a; font-weight: 700;
+      padding: 13px 32px; border-radius: 9px; border: none;
+      font-size: 15px; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-p:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.28); }
+    .btn-o {
+      background: rgba(255,255,255,0.1); color: #fff; font-weight: 600;
+      padding: 12px 28px; border-radius: 9px;
+      border: 2px solid rgba(255,255,255,0.32);
+      font-size: 15px; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-o:hover { background: rgba(255,255,255,0.18); }
+
+    .demo-features { background: #eff6ff; padding: 68px 40px; }
+    .demo-features h2 {
+      text-align: center; font-size: 28px; font-weight: 800;
+      color: #1e3a8a; margin-bottom: 40px;
+    }
+    .feat-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 22px; max-width: 1060px; margin: 0 auto;
+    }
+    .feat-card {
+      background: #fff; border: 1px solid #dbeafe;
+      border-radius: 14px; padding: 26px 20px; text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(30,58,138,0.1); }
+    .feat-card .fi { font-size: 36px; margin-bottom: 10px; }
+    .feat-card h3 { font-size: 16px; font-weight: 700; color: #1e3a8a; margin-bottom: 6px; }
+    .feat-card p { font-size: 13px; color: #5a6a8a; line-height: 1.55; }
+
+    /* ══════════════════════════════════════════════════════════
+       FLOATING LAUNCHER
+    ══════════════════════════════════════════════════════════ */
+    #cp-launcher {
+      position: fixed; bottom: 28px; right: 28px; z-index: 9998;
+      width: 68px; height: 68px; border-radius: 50%;
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    .lnr-wrap { position: relative; width: 68px; height: 68px; }
+    .pulse-ring {
+      position: absolute; inset: -7px; border-radius: 50%;
+      border: 2.5px solid rgba(96,165,250,0.7);
+      animation: pulseRing 2.2s ease-out infinite; pointer-events: none;
+    }
+    @keyframes pulseRing {
+      0%   { transform: scale(0.9);  opacity: 1; }
+      70%  { transform: scale(1.25); opacity: 0; }
+      100% { transform: scale(1.25); opacity: 0; }
+    }
+    .avt-circle {
+      width: 68px; height: 68px; border-radius: 50%;
+      overflow: hidden; border: 3px solid #fff;
+      background: linear-gradient(135deg,#1e3a8a,#3b82f6);
+      box-shadow: 0 6px 28px rgba(30,58,138,0.4);
+    }
+    .avt-circle img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top; display: block;
+    }
+    .avt-circle .avt-fallback {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; color: #93c5fd; font-size: 28px; font-weight: 800;
+    }
+    .online-dot {
+      position: absolute; bottom: 2px; right: 2px;
+      width: 15px; height: 15px; border-radius: 50%;
+      background: #22c55e; border: 2.5px solid #fff;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       OUTSIDE AVATAR — IS the floating launcher (bottom-right)
+    ══════════════════════════════════════════════════════════ */
+    #cp-avt-outside {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 150px;
+      z-index: 9998;
+      pointer-events: all;
+      cursor: pointer;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      transition: transform 0.18s ease;
+    }
+    #cp-avt-outside:hover { transform: translateY(-4px); }
+    #cp-avt-outside:active { transform: translateY(-1px); }
+
+    /* Pulse ring around the image card when chat is closed */
+    .avt-outer-pulse {
+      position: absolute; inset: -8px;
+      border-radius: 22px;
+      border: 2.5px solid rgba(96,165,250,0.65);
+      animation: pulseRing 2.4s ease-out infinite;
+      pointer-events: none; z-index: 4;
+    }
+    /* Online dot on avatar */
+    .avt-outer-dot {
+      position: absolute; bottom: 10px; right: 10px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #22c55e; border: 2.5px solid #fff;
+      z-index: 5; box-shadow: 0 0 5px rgba(34,197,94,0.6);
+    }
+
+    .avt-outer-wrap {
+      position: relative; width: 150px; height: 256px;
+      border-radius: 18px; overflow: hidden;
+      background: linear-gradient(175deg, #1e3a8a 0%, #2563eb 100%);
+      box-shadow: 0 12px 40px rgba(30,58,138,0.38);
+    }
+    .avt-outer-wrap img,
+    .avt-outer-wrap video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top; display: block;
+      transform: scale(1.18) translateY(-20%);
+      transform-origin: center top;
+      transition: opacity 0.4s ease;
+    }
+    /* Unmute pill that appears over the video intro */
+    #cp-unmute-btn {
+      position: absolute; bottom: 42px; left: 8px;
+      background: rgba(0,0,0,0.52); color: #fff;
+      border: 1px solid rgba(255,255,255,0.22); border-radius: 20px;
+      padding: 3px 9px 3px 7px; font-size: 11px; font-weight: 600;
+      cursor: pointer; z-index: 6; pointer-events: all;
+      backdrop-filter: blur(4px); letter-spacing: 0.3px;
+      display: flex; align-items: center; gap: 4px;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    #cp-unmute-btn:hover { background: rgba(0,0,0,0.72); }
+    #cp-unmute-btn.hidden { opacity: 0; pointer-events: none; transform: scale(0.82); }
+    .avt-outer-glow {
+      position: absolute; inset: 0; border-radius: 18px;
+      border: 3px solid transparent; pointer-events: none; z-index: 2;
+    }
+    /* Talking state on outside avatar */
+    #cp-avt-outside.talking .avt-outer-glow {
+      animation: glowPulse 0.9s ease-in-out infinite alternate;
+    }
+    @keyframes glowPulse {
+      0%   { border-color: rgba(59,130,246,0.65);
+             box-shadow: 0 0 12px rgba(59,130,246,0.5),inset 0 0 12px rgba(59,130,246,0.2); }
+      100% { border-color: #60a5fa;
+             box-shadow: 0 0 28px rgba(96,165,250,0.95),inset 0 0 18px rgba(96,165,250,0.3); }
+    }
+    /* Sound wave — absolute overlay at bottom of image, never shifts text */
+    .sw-out {
+      position: absolute; bottom: 10px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 4px; align-items: flex-end; height: 26px;
+      z-index: 3; opacity: 0; transition: opacity 0.28s;
+    }
+    #cp-avt-outside.talking .sw-out { opacity: 1; }
+    .sw-out-bar {
+      width: 5px; border-radius: 3px;
+      background: linear-gradient(to top,#3b82f6,#93c5fd);
+      transform-origin: bottom;
+      animation: swBar 0.6s ease-in-out infinite alternate;
+    }
+    .sw-out-bar:nth-child(1) { height: 10px; animation-duration: 0.52s; }
+    .sw-out-bar:nth-child(2) { height: 20px; animation-duration: 0.71s; animation-delay: 0.12s; }
+    .sw-out-bar:nth-child(3) { height: 26px; animation-duration: 0.45s; animation-delay: 0.06s; }
+    .sw-out-bar:nth-child(4) { height: 14px; animation-duration: 0.84s; animation-delay: 0.18s; }
+    .sw-out-bar:nth-child(5) { height: 20px; animation-duration: 0.62s; animation-delay: 0.09s; }
+    @keyframes swBar {
+      from { transform: scaleY(0.22); }
+      to   { transform: scaleY(1); }
+    }
+    .avt-outer-name {
+      margin-top: 7px;
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+      text-align: center;
+    }
+    .avt-outer-name .name-brand {
+      font-size: 9px; font-weight: 700;
+      color: rgba(255,255,255,0.55); letter-spacing: 1.8px; text-transform: uppercase;
+    }
+    .avt-outer-name .name-main {
+      font-size: 13.5px; font-weight: 800;
+      color: #fff; letter-spacing: 0.2px;
+    }
+    .avt-outer-name .name-role {
+      font-size: 9.5px; font-weight: 500;
+      color: #93c5fd; letter-spacing: 0.6px; text-transform: uppercase;
+    }
+    @media (max-width: 720px) { #cp-avt-outside { display: none; } }
+
+    /* Hide the old circular launcher — avatar IS the launcher now */
+    #cp-launcher { display: none; }
+
+    /* ══════════════════════════════════════════════════════════
+       CHAT CARD — anchored left of the avatar (150 + 16 + 28 = 194)
+    ══════════════════════════════════════════════════════════ */
+    #cp-card {
+      position: fixed; bottom: 28px; right: 194px; z-index: 9999;
+      width: 380px; height: 620px;
+      background: #fff;
+      border-radius: 26px;
+      border: 3px solid #0f172a;
+      box-shadow: 0 24px 80px rgba(15,23,74,0.38), 0 4px 20px rgba(0,0,0,0.14);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.82) translateY(24px);
+      transform-origin: bottom right;
+      opacity: 0; pointer-events: none;
+      transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1),
+                  opacity 0.22s ease, height 0.22s ease;
+    }
+    #cp-card.open  { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+    #cp-card.minimized { height: 60px; }
+    /* scale from bottom-right corner toward the avatar */
+    #cp-card { transform-origin: bottom right; }
+
+    /* ── HEADER ────────────────────────────────────────────── */
+    .cp-hdr {
+      background: #0f172a; height: 60px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 14px 0 18px;
+    }
+    .cp-hdr-left { display: flex; align-items: center; gap: 10px; }
+    .hdr-avatar {
+      width: 34px; height: 34px; border-radius: 50%; overflow: hidden;
+      background: linear-gradient(135deg,#1e3a8a,#3b82f6);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .hdr-avatar img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center top;
+    }
+    .hdr-avatar .hdr-avt-fb {
+      color: #93c5fd; font-size: 15px; font-weight: 800;
+    }
+    .hdr-info { display: flex; flex-direction: column; gap: 1px; }
+    .cp-hdr-title { font-size: 13px; font-weight: 700; color: #fff; }
+    .hdr-status {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; color: rgba(255,255,255,0.55);
+    }
+    .hdr-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
+      box-shadow: 0 0 5px rgba(34,197,94,0.7);
+    }
+    .cp-hdr-btns { display: flex; gap: 4px; }
+    .cp-hdr-btns button {
+      background: rgba(255,255,255,0.1); border: none;
+      color: rgba(255,255,255,0.85); width: 28px; height: 28px;
+      border-radius: 7px; cursor: pointer; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .cp-hdr-btns button:hover { background: rgba(255,255,255,0.22); }
+
+    /* ── MESSAGES ───────────────────────────────────────────── */
+    .cp-msgs {
+      flex: 1; overflow-y: auto;
+      padding: 18px 14px 10px;
+      background: #f0f6ff;
+      scroll-behavior: smooth; min-height: 0;
+    }
+    .cp-msgs::-webkit-scrollbar { width: 4px; }
+    .cp-msgs::-webkit-scrollbar-track { background: transparent; }
+    .cp-msgs::-webkit-scrollbar-thumb { background: #bfdbfe; border-radius: 4px; }
+
+    /* Bubble rows */
+    .brow {
+      display: flex; margin-bottom: 14px; gap: 9px;
+      align-items: flex-end;
+      animation: fadeUp 0.3s ease both;
+    }
+    .brow.daniel { flex-direction: row; }
+    .brow.user   { flex-direction: row-reverse; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(9px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bubble avatar icons */
+    .b-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      flex-shrink: 0; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .b-icon.dan {
+      background: linear-gradient(135deg,#1e3a8a,#3b82f6);
+      font-size: 13px; font-weight: 800; color: #fff;
+    }
+    .b-icon.dan img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center top;
+    }
+    .b-icon.usr {
+      background: #e2e8f0;
+    }
+    .b-icon.usr svg { width: 18px; height: 18px; fill: #64748b; }
+
+    .bubble {
+      max-width: 74%; padding: 11px 15px;
+      font-size: 13.5px; line-height: 1.54;
+      border-radius: 18px; white-space: pre-wrap;
+    }
+    .brow.daniel .bubble {
+      background: #fff; color: #1e293b;
+      border: 1.5px solid #dbeafe;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 10px rgba(30,58,138,0.07);
+    }
+    .brow.user .bubble {
+      background: #2563eb; color: #fff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 2px 12px rgba(37,99,235,0.32);
+    }
+
+    /* Typing indicator */
+    .typing-dots { display: flex; gap: 5px; align-items: center; padding: 4px 2px; }
+    .typing-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #93c5fd; animation: tdot 1.3s ease-in-out infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes tdot {
+      0%,55%,100% { transform: translateY(0); opacity: 0.4; }
+      28%          { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* ── INPUT BAR ──────────────────────────────────────────── */
+    .cp-input-bar {
+      padding: 8px 14px 12px; background: #fff;
+      border-top: 1.5px solid #dbeafe;
+      display: flex; flex-direction: column; flex-shrink: 0;
+    }
+    .cp-input-row { display: flex; gap: 7px; align-items: center; }
+    .cp-input-bar input {
+      flex: 1; background: #f1f5f9;
+      border: 1.5px solid #e2e8f0; border-radius: 28px;
+      padding: 10px 18px; font-size: 14px; color: #1e293b;
+      outline: none; font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .cp-input-bar input::placeholder { color: #94a3b8; }
+    .cp-input-bar input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
+
+    /* Send button — dark */
+    .cp-send {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #0f172a; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: background 0.18s, transform 0.13s;
+      box-shadow: 0 3px 10px rgba(15,23,74,0.3);
+    }
+    .cp-send:hover  { background: #1e293b; transform: scale(1.06); }
+    .cp-send:active { transform: scale(0.93); }
+    .cp-send svg    { width: 17px; height: 17px; fill: #fff; display: block; }
+
+    /* Mic button — blue */
+    .cp-mic {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #2563eb; border: none; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.18s, transform 0.13s;
+      box-shadow: 0 3px 10px rgba(37,99,235,0.32);
+    }
+    .cp-mic:hover  { background: #1d4ed8; transform: scale(1.06); }
+    .cp-mic:active { transform: scale(0.93); }
+    .cp-mic svg    { width: 17px; height: 17px; fill: #fff; display: block; }
+    .cp-mic.listening {
+      background: #ef4444;
+      animation: micPulse 1s ease-in-out infinite;
+    }
+    @keyframes micPulse {
+      0%,100% { box-shadow: 0 0 0 0px rgba(239,68,68,0.35); }
+      50%      { box-shadow: 0 0 0 7px rgba(239,68,68,0); }
+    }
+
+    /* Speaker button — blue */
+    .cp-speaker {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #2563eb; border: none; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.18s, transform 0.13s;
+      box-shadow: 0 3px 10px rgba(37,99,235,0.32);
+    }
+    .cp-speaker:hover  { background: #1d4ed8; transform: scale(1.06); }
+    .cp-speaker:active { transform: scale(0.93); }
+    .cp-speaker svg    { width: 17px; height: 17px; fill: #fff; display: block; }
+    .cp-speaker.muted  { background: #475569; box-shadow: none; }
+
+    /* Listening label */
+    .cp-listening-label {
+      display: none; font-size: 11.5px; font-weight: 600;
+      color: #ef4444; letter-spacing: 0.4px; padding: 2px 4px 4px;
+      animation: listenFade 0.8s ease-in-out infinite alternate;
+    }
+    .cp-listening-label.visible { display: block; }
+    @keyframes listenFade { from { opacity: 0.5; } to { opacity: 1; } }
+
+    /* ══════════════════════════════════════════════════════════
+       PRODUCT POPUP — slides up above the chat card
+    ══════════════════════════════════════════════════════════ */
+    #cp-product-popup {
+      position: fixed; bottom: 660px; right: 194px; z-index: 9997;
+      width: 280px; height: 360px;
+      background: #fff; border-radius: 20px;
+      border: 2.5px solid #0f172a;
+      box-shadow: 0 16px 56px rgba(15,23,74,0.26), 0 2px 12px rgba(0,0,0,0.09);
+      display: flex; flex-direction: column; overflow: hidden;
+      opacity: 0; pointer-events: none;
+      transform: translateY(14px);
+      transition: transform 0.35s cubic-bezier(0.34,1.42,0.64,1), opacity 0.25s ease;
+    }
+    #cp-product-popup.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
+
+    .pp-img-wrap {
+      width: 100%; height: 155px;
+      background: linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);
+      position: relative; flex-shrink: 0; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pp-img-wrap img { width: 100%; height: 100%; object-fit: contain; padding: 12px; display: block; }
+    .pp-close {
+      position: absolute; top: 8px; right: 8px;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); border: none; cursor: pointer;
+      color: #fff; font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .pp-close:hover { background: rgba(255,255,255,0.3); }
+    .pp-timer-bar { height: 3px; background: #dbeafe; flex-shrink: 0; overflow: hidden; }
+    .pp-timer-bar-fill {
+      height: 100%; width: 100%;
+      background: linear-gradient(90deg,#3b82f6,#0f172a);
+      transform-origin: left; animation: timerShrink 10s linear forwards;
+    }
+    @keyframes timerShrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+    .pp-body {
+      flex: 1; padding: 14px 16px 12px;
+      display: flex; flex-direction: column; overflow: hidden; min-height: 0;
+    }
+    .pp-title { font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+    .pp-bullets {
+      list-style: none; flex: 1;
+      display: flex; flex-direction: column; gap: 5px; overflow: hidden;
+    }
+    .pp-bullets li {
+      font-size: 12.5px; color: #334155; line-height: 1.45;
+      display: flex; gap: 7px; align-items: flex-start;
+    }
+    .pp-bullets li::before {
+      content: '✦'; color: #3b82f6; font-size: 9px; flex-shrink: 0; margin-top: 2px;
+    }
+    .pp-btn {
+      display: block; width: 100%; background: #0f172a; color: #fff;
+      text-align: center; text-decoration: none; font-size: 13.5px; font-weight: 700;
+      padding: 10px 0; border-radius: 9px; margin-top: 10px;
+      transition: background 0.18s, transform 0.13s;
+      box-shadow: 0 3px 10px rgba(15,23,74,0.22);
+    }
+    .pp-btn:hover  { background: #1e293b; transform: translateY(-1px); }
+    .pp-btn:active { transform: translateY(0); }
+
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ DEMO BACKGROUND PAGE ══════ -->
+<nav class="demo-nav">
+  <div class="brand">Crystal<span>Prompter</span></div>
+  <ul>
+    <li><a href="#">Products</a></li>
+    <li><a href="#">Compare</a></li>
+    <li><a href="#">Resources</a></li>
+    <li><a href="#">Support</a></li>
+    <li><a href="#" class="nav-cta">Shop Now</a></li>
+  </ul>
+</nav>
+
+<section class="demo-hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="hero-content">
+    <div class="badge">Professional Teleprompter Systems</div>
+    <h1>Speak with <em>Confidence</em>.<br>Look Natural on Camera.</h1>
+    <p>Crystal Prompter delivers studio-grade teleprompter solutions for creators, broadcasters, and enterprises. From compact rigs to full broadcast systems.</p>
+    <div class="hero-btns">
+      <button class="btn-p">Explore Products</button>
+      <button class="btn-o">Watch Demo</button>
+    </div>
+  </div>
+</section>
+
+<section class="demo-features">
+  <h2>Our Complete Product Lineup</h2>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="fi">🎥</div><h3>Tab 12</h3><p>Compact 12" system. Beginner-friendly, portable, perfect for solo creators.</p></div>
+    <div class="feat-card"><div class="fi">🎬</div><h3>Cue 24</h3><p>Mid-range 24" powerhouse for YouTubers and growing content teams.</p></div>
+    <div class="feat-card"><div class="fi">📡</div><h3>Mime 27</h3><p>Professional 27" system for broadcasters and live productions.</p></div>
+    <div class="feat-card"><div class="fi">🏆</div><h3>Framer 32</h3><p>Flagship 32" studio system — the broadcast industry standard.</p></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════ FLOATING LAUNCHER ═════════ -->
+<button id="cp-launcher" aria-label="Open Crystal Prompter Chat Assistant">
+  <div class="lnr-wrap">
+    <div class="pulse-ring"></div>
+    <div class="avt-circle" id="lnr-avt-circle">
+      <img src="avatar.png" alt="Daniel" id="lnr-img" />
+    </div>
+    <div class="online-dot"></div>
+  </div>
+</button>
+
+<!-- ════════════════════════════════ OUTSIDE AVATAR (launcher) ═ -->
+<div id="cp-avt-outside" role="button" aria-label="Open Crystal Prompter Chat">
+  <div class="avt-outer-wrap">
+    <div class="avt-outer-pulse"></div>
+    <div class="avt-outer-glow"></div>
+    <div class="avt-outer-dot"></div>
+    <video id="cp-intro-video" src="intro.mp4" muted playsinline autoplay></video>
+    <img src="avatar.png" alt="Daniel" id="cp-avt-outside-img" style="display:none;opacity:0" />
+    <button id="cp-unmute-btn" aria-label="Unmute intro">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+      Unmute
+    </button>
+    <div class="sw-out">
+      <div class="sw-out-bar"></div>
+      <div class="sw-out-bar"></div>
+      <div class="sw-out-bar"></div>
+      <div class="sw-out-bar"></div>
+      <div class="sw-out-bar"></div>
+    </div>
+  </div>
+  <div class="avt-outer-name">
+    <span class="name-brand">Crystal Prompter</span>
+    <span class="name-role">AI Agent</span>
+    <span class="name-main">Daniel</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ CHAT CARD ═════════════════ -->
+<div id="cp-card" role="dialog" aria-modal="true" aria-label="Crystal Prompter Chat">
+
+  <!-- Header -->
+  <div class="cp-hdr">
+    <div class="cp-hdr-left">
+      <div class="hdr-avatar" id="hdr-avt-wrap">
+        <img src="avatar.png" alt="Daniel" id="hdr-avt-img" />
+      </div>
+      <div class="hdr-info">
+        <span class="cp-hdr-title">Crystal Prompter AI</span>
+        <span class="hdr-status"><span class="hdr-dot"></span>Online</span>
+      </div>
+    </div>
+    <div class="cp-hdr-btns">
+      <button id="cp-min" title="Minimize" aria-label="Minimize">−</button>
+      <button id="cp-close" title="Close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="cp-msgs" id="cp-msgs"></div>
+
+  <!-- Input Bar -->
+  <div class="cp-input-bar" id="cp-input-bar">
+    <span class="cp-listening-label" id="cp-listening-label">🎙 Listening…</span>
+    <div class="cp-input-row">
+      <input type="text" id="cp-input" placeholder="Send message..." autocomplete="off" spellcheck="false" />
+      <button class="cp-send" id="cp-send-btn" aria-label="Send message">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+      <button class="cp-mic" id="cp-mic-btn" aria-label="Voice input">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V20H9v2h6v-2h-2v-2.08A7 7 0 0 0 19 11h-2z"/></svg>
+      </button>
+      <button class="cp-speaker" id="cp-speaker-btn" aria-label="Toggle voice output">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /#cp-card -->
+
+<!-- ════════════════════════════════ PRODUCT POPUP ═════════════ -->
+<div id="cp-product-popup" role="dialog" aria-label="Product Info">
+  <div class="pp-img-wrap">
+    <img id="pp-img" src="" alt="" />
+    <button class="pp-close" id="pp-close-btn" aria-label="Close">✕</button>
+  </div>
+  <div class="pp-timer-bar"><div class="pp-timer-bar-fill" id="pp-timer-fill"></div></div>
+  <div class="pp-body">
+    <div class="pp-title" id="pp-title"></div>
+    <ul class="pp-bullets" id="pp-bullets"></ul>
+    <a class="pp-btn" id="pp-link" href="#" target="_blank" rel="noopener">Learn More</a>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   Q&A DATA — keyword-matched responses
+══════════════════════════════════════════════════════════════ */
+const QA = [
+  {
+    keys: ['hello','hi ','hey ','howdy','greetings','good morning','good afternoon','good evening','what\'s up','sup'],
+    ans: "Hello! I'm Daniel, your Crystal Prompter AI assistant. I'm here to help you find the perfect teleprompter solution. What would you like to know?"
+  },
+  {
+    keys: ['what is crystal','about crystal','crystal prompter','who are you','what do you do','overview','company','brand'],
+    ans: "Crystal Prompter is a professional teleprompter company specializing in high-quality teleprompting systems for creators, broadcasters, and enterprises. Our lineup — Tab 12, Cue 24, Mime 27, and Framer 32 — is engineered for every production scale. We're passionate about helping you speak confidently and look natural on camera."
+  },
+  {
+    keys: ['tab 12','tab12'],
+    ans: "The Tab 12 is our entry-level teleprompter — compact, lightweight, and incredibly easy to set up. With a 12\" glass panel and simple USB scroll controller, it's the perfect choice for beginners, solo content creators, and home studio setups. Affordable and portable, yet delivers truly professional results right out of the box."
+  },
+  {
+    keys: ['cue 24','cue24'],
+    ans: "The Cue 24 is our mid-range powerhouse built for serious content creators. Featuring a 24\" anti-glare glass panel, wireless scroll controller, and dual-monitor support, it strikes the ideal balance between professional features and ease of use. It's a top choice for full-time YouTubers, podcasters, and corporate video teams who film regularly."
+  },
+  {
+    keys: ['mime 27','mime27'],
+    ans: "The Mime 27 is our professional-grade broadcast system. With a 27\" studio glass, motorized angle adjustment, HDMI/SDI compatibility, and industry-standard camera mounting, it's built for demanding production environments. Trusted by news studios, live event producers, and professional videographers who need reliable, repeatable performance."
+  },
+  {
+    keys: ['framer 32','framer32'],
+    ans: "The Framer 32 is our flagship masterpiece — the absolute pinnacle of teleprompter engineering. Its 32\" optical-grade glass, ultra-low-reflection coating, 4K display compatibility, and heavy-duty carbon fiber frame set the industry benchmark. The choice of top broadcast studios, cinematic productions, and enterprise clients worldwide. If only the best will do, this is it."
+  },
+  {
+    keys: ['difference','compare','vs','versus','which one','which model','better than','best model','comparison','models'],
+    ans: "Here's a quick comparison of all four models:\n\n• Tab 12 — 12\" panel, beginner & home use, ~$149\n• Cue 24 — 24\" panel, creators & small teams, ~$299\n• Mime 27 — 27\" panel, broadcast & live production, ~$549\n• Framer 32 — 32\" panel, flagship studio system, ~$899\n\nChoose by scale: Tab 12 for personal use, Cue 24 for regular content creation, Mime 27 for professional broadcast, Framer 32 for full studio setups. Want details on a specific model?"
+  },
+  {
+    keys: ['beginner','new to','just starting','first time','starter','easy to use','simple','never used'],
+    ans: "For beginners, the Tab 12 is our top recommendation! It's designed to be intuitive — no technical background required. Most users are filming professional-quality content within an hour of unboxing it. It's lightweight, affordable, and the entire setup fits in a carry bag. A fantastic first teleprompter that will serve you for years."
+  },
+  {
+    keys: ['youtuber','youtube','content creator','creator','vlogger','influencer','social media','channel'],
+    ans: "The Cue 24 is a fan favorite among YouTubers and content creators! The wireless scroll controller lets you read hands-free, the 24\" glass gives you plenty of reading space, and the anti-glare coating keeps your eyes looking natural on camera. Many creators start with the Tab 12 and upgrade to the Cue 24 as their channel grows."
+  },
+  {
+    keys: ['professional','broadcast','news','studio','tv','television','live production','live stream','corporate','enterprise'],
+    ans: "For professional and broadcast applications, the Mime 27 and Framer 32 are your go-to systems. The Mime 27 handles most broadcast environments with SDI/HDMI compatibility and motorized adjustments. For flagship broadcast studios or cinematic productions, the Framer 32 is the industry benchmark — built to broadcast standards with optical-grade glass."
+  },
+  {
+    keys: ['setup','assemble','assembly','install','installation','how to set','setting up','how do i build','mount','mounting','quick start'],
+    ans: "Crystal Prompter systems are engineered for fast, tool-free setup:\n\n1. Attach the frame to your camera or tripod\n2. Insert the glass panel at the prescribed angle\n3. Place your tablet or monitor inside the hood\n4. Connect the scroll controller (USB or Bluetooth)\n5. Load your script in our free app or any text app\n\nMost setups take under 15 minutes. Each unit ships with a step-by-step quick-start guide, plus we have video tutorials at crystalprompter.com."
+  },
+  {
+    keys: ['price','pricing','cost','how much','affordable','expensive','budget','value'],
+    ans: "Our current pricing lineup:\n\n• Tab 12 — from $149\n• Cue 24 — from $299\n• Mime 27 — from $549\n• Framer 32 — from $899\n\nAll models include a 1-year warranty and free access to the Crystal Prompter software. Volume discounts available for studios and enterprises. Visit crystalprompter.com for current promotions and bundle deals!"
+  },
+  {
+    keys: ['buy','purchase','order','where to buy','shop','store','available','get one','how to order'],
+    ans: "You can order directly from crystalprompter.com — we ship worldwide! Buying direct gets you the best price, full warranty coverage, and access to our dedicated customer support team. We accept all major credit cards, PayPal, and offer flexible financing. Orders placed before 2PM EST typically ship same day."
+  },
+  {
+    keys: ['shipping','delivery','ship','how long','how fast','dispatch','when will','arrive','international','worldwide'],
+    ans: "We offer fast, fully tracked shipping worldwide:\n\n• US Domestic: 3–5 business days (Express 1–2 days available)\n• Canada: 5–7 business days\n• Europe: 7–10 business days\n• International: 7–14 business days\n\nFree standard shipping on US orders over $200. All orders are insured and include tracking. Need it urgently? Priority and overnight options are available at checkout!"
+  },
+  {
+    keys: ['return','refund','exchange','warranty','guarantee','policy','broken','defective'],
+    ans: "We fully stand behind every Crystal Prompter product:\n\n• 30-day hassle-free returns\n• 1-year manufacturer warranty\n• Free replacement for defective components\n• Lifetime customer support\n\nIf you're not completely satisfied, reach us within 30 days for a full refund or exchange — no questions asked. Contact sales@crystalprompter.com to start the process."
+  },
+  {
+    keys: ['software','app','application','scroll','script','teleprompter app','compatible','ipad','tablet','android'],
+    ans: "Crystal Prompter systems work with virtually all teleprompter apps — including our free Crystal Prompter app, PromptSmart, and Teleprompt+. Compatible with iPad, Android tablets, and desktop computers. Our app features adjustable scroll speed, font sizing, mirror mode, and multi-script management. The Cue 24 and above include wireless Bluetooth scroll controllers."
+  },
+  {
+    keys: ['camera','dslr','mirrorless','camcorder','cinema','iphone','smartphone','rig','compatible camera'],
+    ans: "Crystal Prompter is camera-agnostic — compatible with DSLRs, mirrorless cameras, camcorders, cinema cameras, and smartphone rigs. Our universal mounting system fits standard 15mm rails, camera cages, and tripod heads. Whether you shoot Sony, Canon, Nikon, Blackmagic, RED, or a modern iPhone, our systems integrate seamlessly."
+  },
+  {
+    keys: ['contact','support','help','email','reach','customer service','phone','talk to someone','speak to'],
+    ans: "Our team is always happy to help!\n\n• Email: sales@crystalprompter.com\n• Website: crystalprompter.com\n• Hours: Monday–Friday, 9AM–6PM EST\n\nFor product demos, technical support, bulk pricing, or general questions — don't hesitate to reach out. We typically respond within a few hours on business days."
+  },
+  {
+    keys: ['thank','thanks','appreciate','helpful','great job','awesome','perfect','wonderful','that\'s great'],
+    ans: "You're very welcome! It's my pleasure to help. If you have any more questions about Crystal Prompter products, pricing, or anything else, I'm right here. Ready to find your perfect teleprompter? Head over to crystalprompter.com to browse the full lineup!"
+  },
+  {
+    keys: ['bye','goodbye','see you','take care','later','cya','farewell'],
+    ans: "Thanks for chatting — it was great speaking with you! Whenever you're ready to elevate your content with a Crystal Prompter, we'll be here. Have a wonderful day and happy filming!"
+  }
+];
+
+const FALLBACK = "Great question! For the most accurate answer, you can reach our team directly at sales@crystalprompter.com or visit crystalprompter.com. I'm happy to help with anything else!";
+
+/* ══════════════════════════════════════════════════════════════
+   DOM REFS
+══════════════════════════════════════════════════════════════ */
+const card        = document.getElementById('cp-card');
+const launcher    = document.getElementById('cp-launcher');
+const closeBtn    = document.getElementById('cp-close');
+const minBtn      = document.getElementById('cp-min');
+const msgs        = document.getElementById('cp-msgs');
+const input       = document.getElementById('cp-input');
+const sendBtn     = document.getElementById('cp-send-btn');
+const avtSec      = document.getElementById('cp-avt-outside'); // talking animations on outside avatar
+const lnrImg      = document.getElementById('lnr-img');
+const lnrCircle   = document.getElementById('lnr-avt-circle');
+const outsideImg  = document.getElementById('cp-avt-outside-img');
+const hdrAvtImg   = document.getElementById('hdr-avt-img');
+const hdrAvtWrap  = document.getElementById('hdr-avt-wrap');
+
+/* ── Avatar image fallbacks ── */
+function imgFallback(img, wrap, letter, size) {
+  img.style.display = 'none';
+  const fb = document.createElement('div');
+  fb.className = 'avt-fallback';
+  fb.style.cssText = `display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#93c5fd;font-size:${size}px;font-weight:800;`;
+  fb.textContent = letter;
+  wrap.appendChild(fb);
+}
+lnrImg.onerror       = () => imgFallback(lnrImg, lnrCircle, 'D', 26);
+outsideImg.onerror   = () => {
+  outsideImg.style.display = 'none';
+  const w = document.querySelector('.avt-outer-wrap');
+  if (w) {
+    const fb = document.createElement('div');
+    fb.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;color:#93c5fd;font-size:58px;font-weight:900;';
+    fb.textContent = 'D';
+    w.appendChild(fb);
+  }
+};
+hdrAvtImg.onerror    = () => {
+  hdrAvtImg.style.display = 'none';
+  const fb = document.createElement('div');
+  fb.className = 'hdr-avt-fb';
+  fb.textContent = 'D';
+  hdrAvtWrap.appendChild(fb);
+};
+
+/* ══════════════════════════════════════════════════════════════
+   INTRO VIDEO — autoplay on load, switch to static img when done
+══════════════════════════════════════════════════════════════ */
+let introPlaying = true; // blocks TTS while intro video runs
+
+(function initIntroVideo() {
+  const vid      = document.getElementById('cp-intro-video');
+  const unmute   = document.getElementById('cp-unmute-btn');
+  if (!vid) { introPlaying = false; return; }
+
+  function switchToStaticImg() {
+    introPlaying = false; // TTS now allowed
+    vid.style.opacity = '0';
+    outsideImg.style.display = 'block';
+    setTimeout(() => { outsideImg.style.opacity = '1'; }, 20);
+    if (unmute) unmute.classList.add('hidden');
+    setTimeout(() => { vid.style.display = 'none'; }, 450);
+  }
+
+  vid.addEventListener('ended', switchToStaticImg);
+
+  // Unmute button — doesn't open chat
+  if (unmute) {
+    unmute.addEventListener('click', e => {
+      e.stopPropagation();
+      vid.muted = false;
+      vid.play();
+      unmute.classList.add('hidden');
+    });
+  }
+
+  // If autoplay blocked (some mobile browsers), fall back to static image
+  vid.play().catch(() => switchToStaticImg());
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   CARD STATE
+══════════════════════════════════════════════════════════════ */
+let isOpen = false;
+let isMin  = false;
+
+function openCard() {
+  card.classList.add('open');
+  card.classList.remove('minimized');
+  isOpen = true; isMin = false;
+  minBtn.textContent = '−';
+  if (msgs.children.length === 0) greet();
+  setTimeout(() => input.focus(), 350);
+}
+function closeCard() {
+  card.classList.remove('open');
+  isOpen = false;
+  stopSpeech();
+}
+function toggleMin() {
+  isMin = !isMin;
+  card.classList.toggle('minimized', isMin);
+  minBtn.textContent = isMin ? '+' : '−';
+  if (isMin) stopSpeech();
+}
+
+// Avatar IS the launcher now
+const avtOutside = document.getElementById('cp-avt-outside');
+avtOutside.addEventListener('click', () => (isOpen ? closeCard() : openCard()));
+// Old circular launcher hidden but kept as fallback
+launcher.addEventListener('click', () => (isOpen ? closeCard() : openCard()));
+closeBtn.addEventListener('click', closeCard);
+minBtn.addEventListener('click', toggleMin);
+
+/* ══════════════════════════════════════════════════════════════
+   SPEECH SYNTHESIS
+══════════════════════════════════════════════════════════════ */
+let voices  = [];
+let isMuted = false;
+const synth = window.speechSynthesis;
+
+function loadVoices() { voices = synth ? synth.getVoices() : []; }
+if (synth) { loadVoices(); synth.onvoiceschanged = loadVoices; }
+
+function pickVoice() {
+  const preferred = ['daniel','alex','tom','fred','mark','david','james','matthew','ryan','male'];
+  return voices.find(v =>
+    preferred.some(p => v.name.toLowerCase().includes(p)) && v.lang.startsWith('en')
+  ) || voices.find(v => v.lang.startsWith('en-')) || voices[0];
+}
+function speak(text) {
+  if (!synth || isMuted || introPlaying) return;
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 0.94; utt.pitch = 0.9; utt.volume = 1;
+  const voice = pickVoice();
+  if (voice) utt.voice = voice;
+  utt.onstart = () => setTalking(true);
+  utt.onend   = () => setTalking(false);
+  utt.onerror = () => setTalking(false);
+  synth.speak(utt);
+}
+function stopSpeech() {
+  if (synth) synth.cancel();
+  setTalking(false);
+}
+
+/* ── Speaker / mute toggle ── */
+const speakerBtn = document.getElementById('cp-speaker-btn');
+speakerBtn.addEventListener('click', () => {
+  isMuted = !isMuted;
+  speakerBtn.classList.toggle('muted', isMuted);
+  speakerBtn.title = isMuted ? 'Unmute voice' : 'Mute voice';
+  if (isMuted) stopSpeech();
+});
+
+/* ══════════════════════════════════════════════════════════════
+   TALKING ANIMATIONS (on outside avatar)
+══════════════════════════════════════════════════════════════ */
+function setTalking(active) {
+  avtSec.classList.toggle('talking', active);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GREETING
+══════════════════════════════════════════════════════════════ */
+function greet() {
+  const g = "Hi there! I'm Daniel, your Crystal Prompter AI assistant. I can help you with product info, pricing, setup, and more. What would you like to know?";
+  setTimeout(() => { addBubble('daniel', g); speak(g); }, 700);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   KEYWORD MATCHING
+══════════════════════════════════════════════════════════════ */
+function findAnswer(q) {
+  const ql = (' ' + q + ' ').toLowerCase();
+  let best = null, bestScore = 0;
+  for (const item of QA) {
+    let score = 0;
+    for (const k of item.keys) { if (ql.includes(k)) score += k.trim().length; }
+    if (score > bestScore) { bestScore = score; best = item; }
+  }
+  return best ? best.ans : FALLBACK;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BUBBLES
+══════════════════════════════════════════════════════════════ */
+function makeDanielIcon() {
+  const ic = document.createElement('div');
+  ic.className = 'b-icon dan';
+  // Use avatar image if loaded
+  const img = document.createElement('img');
+  img.src = 'avatar.png'; img.alt = 'D';
+  img.onerror = () => { img.style.display='none'; ic.textContent='D'; };
+  ic.appendChild(img);
+  return ic;
+}
+function makeUserIcon() {
+  const ic = document.createElement('div');
+  ic.className = 'b-icon usr';
+  ic.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
+  return ic;
+}
+
+function addBubble(who, text) {
+  const row = document.createElement('div');
+  row.className = 'brow ' + who;
+  if (who === 'daniel') row.appendChild(makeDanielIcon());
+  const bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.textContent = text;
+  row.appendChild(bub);
+  if (who === 'user') row.appendChild(makeUserIcon());
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addTyping() {
+  const row = document.createElement('div');
+  row.className = 'brow daniel'; row.id = 'cp-typing';
+  row.appendChild(makeDanielIcon());
+  const bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  row.appendChild(bub);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() {
+  const t = document.getElementById('cp-typing');
+  if (t) t.remove();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SEND MESSAGE
+══════════════════════════════════════════════════════════════ */
+function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  addBubble('user', text);
+  stopSpeech();
+
+  // Trigger product popup if a product keyword is detected
+  const matchedProduct = typeof detectProduct === 'function' ? detectProduct(text) : null;
+  if (matchedProduct) setTimeout(() => showPopup(matchedProduct), 300);
+
+  addTyping();
+  const delay = 850 + Math.random() * 650;
+  setTimeout(() => {
+    removeTyping();
+    const ans = findAnswer(text);
+    addBubble('daniel', ans);
+    speak(ans);
+  }, delay);
+}
+
+sendBtn.addEventListener('click', sendMessage);
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+/* ══════════════════════════════════════════════════════════════
+   VOICE INPUT — SpeechRecognition
+══════════════════════════════════════════════════════════════ */
+const micBtn      = document.getElementById('cp-mic-btn');
+const listenLabel = document.getElementById('cp-listening-label');
+const SpeechRecog = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition   = null;
+let micActive     = false;
+
+if (SpeechRecog) {
+  recognition = new SpeechRecog();
+  recognition.lang = 'en-US';
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+  recognition.onresult = (e) => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    input.value = transcript;
+    if (e.results[e.results.length - 1].isFinal) {
+      stopMic();
+      const product = detectProduct(transcript);
+      if (product) setTimeout(() => showPopup(product), 300);
+      setTimeout(sendMessage, 200);
+    }
+  };
+  recognition.onend   = () => stopMic();
+  recognition.onerror = () => stopMic();
+} else {
+  micBtn.style.display = 'none';
+}
+
+function startMic() {
+  if (!recognition || micActive) return;
+  stopSpeech();
+  micActive = true;
+  micBtn.classList.add('listening');
+  listenLabel.classList.add('visible');
+  input.value = '';
+  input.placeholder = 'Listening…';
+  recognition.start();
+}
+function stopMic() {
+  if (!micActive) return;
+  micActive = false;
+  micBtn.classList.remove('listening');
+  listenLabel.classList.remove('visible');
+  input.placeholder = 'Send message...';
+  try { recognition.stop(); } catch(_) {}
+}
+micBtn.addEventListener('click', () => { micActive ? stopMic() : startMic(); });
+
+/* ══════════════════════════════════════════════════════════════
+   PRODUCT POPUP
+══════════════════════════════════════════════════════════════ */
+const PRODUCTS = {
+  'tab12': {
+    name: 'Tab 12',
+    img:  'https://static.wixstatic.com/media/d0630a_981e91bc34b44598b9c0277632ad56c9~mv2.png',
+    bullets: ['12-inch iPad teleprompter','Ultra-simple, tool-free setup','Lightweight & portable for on-site recording','Perfect entry-level system for solo creators'],
+    link: 'https://www.crystalprompter.com/tab12',
+    keys: ['tab 12','tab12']
+  },
+  'cue24': {
+    name: 'Cue 24',
+    img:  'https://static.wixstatic.com/media/d0630a_4da74b55aced44e59284f9daa4f0d6fb~mv2.png',
+    bullets: ['24-inch anti-glare glass panel','Superior video quality for any production','Suits both professionals and beginners','Wireless Bluetooth scroll controller included'],
+    link: 'https://www.crystalprompter.com/cue24',
+    keys: ['cue 24','cue24']
+  },
+  'mime27': {
+    name: 'Mime 27',
+    img:  'https://static.wixstatic.com/media/d0630a_ce521e02dfa345a28c3415b6bc788a79~mv2.png',
+    bullets: ['Angle-adjustable PGM monitor design','Built-in screen flip for flexible orientation','27-inch professional broadcast glass','HDMI & SDI compatible for live production'],
+    link: 'https://www.crystalprompter.com/mime27',
+    keys: ['mime 27','mime27']
+  },
+  'framer32': {
+    name: 'Framer 32',
+    img:  'https://static.wixstatic.com/media/d0630a_2166cf549ed94b659e4e92179e76df57~mv2.png',
+    bullets: ['27-inch lightweight teleprompter system','DIY tool-free assembly in minutes','Affordable flagship-level performance','Optical-grade glass, carbon fiber frame'],
+    link: 'https://www.crystalprompter.com/framer32',
+    keys: ['framer 32','framer32']
+  }
+};
+
+const popup     = document.getElementById('cp-product-popup');
+const ppImg     = document.getElementById('pp-img');
+const ppTitle   = document.getElementById('pp-title');
+const ppBullets = document.getElementById('pp-bullets');
+const ppLink    = document.getElementById('pp-link');
+const ppClose   = document.getElementById('pp-close-btn');
+const ppFill    = document.getElementById('pp-timer-fill');
+let   ppTimer   = null;
+
+function detectProduct(text) {
+  const tl = (' ' + text + ' ').toLowerCase();
+  for (const id in PRODUCTS) {
+    if (PRODUCTS[id].keys.some(k => tl.includes(k))) return PRODUCTS[id];
+  }
+  return null;
+}
+function showPopup(product) {
+  ppImg.src = product.img; ppImg.alt = product.name;
+  ppTitle.textContent = product.name;
+  ppLink.href = product.link;
+  ppBullets.innerHTML = product.bullets.map(b => `<li>${b}</li>`).join('');
+  ppFill.style.animation = 'none';
+  ppFill.offsetHeight;
+  ppFill.style.animation = '';
+  popup.classList.add('visible');
+  clearTimeout(ppTimer);
+  ppTimer = setTimeout(hidePopup, 10000);
+}
+function hidePopup() { clearTimeout(ppTimer); popup.classList.remove('visible'); }
+ppClose.addEventListener('click', hidePopup);
+
+/* ══════════════════════════════════════════════════════════════
+   ESCAPE KEY
+══════════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (isOpen) closeCard(); hidePopup(); }
+});
+
+</script>
+</body>
+</html>
