@@ -153,8 +153,12 @@ body{
   overflow:hidden;
   box-shadow:0 8px 24px rgba(26,138,114,.3),0 0 0 2px var(--teal-light);
   margin-bottom:11px;flex-shrink:0;
+  position:relative;
 }
 .av-ring video{width:100%;height:auto;display:block;object-fit:cover}
+.av-tap-overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.42);cursor:pointer;z-index:10;border-radius:12px}
+.av-tap-overlay.show{display:flex}
+.av-tap-text{color:#fff;font-size:10.5px;font-weight:700;background:rgba(0,0,0,.35);padding:5px 12px;border-radius:20px;letter-spacing:.2px}
 .av-name{
   font-size:13px;font-weight:800;color:var(--text-dark);
   margin-bottom:5px;text-align:center;letter-spacing:-.1px;
@@ -185,30 +189,30 @@ body{
 .tb-nav{
   flex-shrink:0;
   background:#fcfefe;
-  border-bottom:1px solid var(--border);
+  border-top:1px solid var(--border);
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(3,1fr);
   gap:0;
 }
 .tb-btn{
   width:100%;
-  display:flex;align-items:center;gap:7px;
-  padding:9px 10px;
+  display:flex;align-items:center;gap:5px;
+  padding:3px 8px;
   border:none;background:none;cursor:pointer;
   font-size:11.5px;color:var(--text-mute);
   border-left:3px solid transparent;
-  border-bottom:1px solid #edf3f1;
+  border-top:1px solid #edf3f1;
   border-right:1px solid #edf3f1;
   transition:all .17s;text-align:left;
 }
-.tb-btn:nth-child(even){border-right:none}
-.tb-btn:last-child{border-bottom:none}
-.tb-btn:nth-last-child(2):nth-child(odd){border-bottom:none}
+.tb-btn:nth-child(3n){border-right:none}
+.tb-btn:nth-child(-n+3){border-top:none}
 .tb-btn:hover{background:var(--teal-pale);color:var(--teal)}
 .tb-btn.active{
-  background:linear-gradient(92deg,var(--teal-light) 0%,var(--teal-pale) 100%);
-  color:var(--teal);border-left-color:var(--teal);font-weight:700;
+  background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%);
+  color:#fff;border-left-color:var(--teal-deep);font-weight:600;
 }
+.tb-btn.active .tb-icon svg{stroke:#fff}
 .tb-icon{width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .tb-icon svg{width:15px;height:15px;stroke:currentColor;flex-shrink:0}
 
@@ -227,6 +231,39 @@ body{
 .tb-content.active ~ .tb-empty{display:none}
 .tb-empty-icon svg{width:30px;height:30px;stroke:#ccddd9;stroke-width:1.5}
 .tb-empty-msg{font-size:12px;color:#b8ccc8;line-height:1.65;max-width:175px}
+/* ── Centered nav prompt ── */
+.tb-prompt{
+  position:absolute;inset:0;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 36px;text-align:center;gap:0;
+  background:linear-gradient(to bottom,var(--teal-pale) 0%,#fff 44%);
+  z-index:5;
+}
+.tb-prompt.show{display:flex}
+.tb-prompt-icon{
+  width:52px;height:52px;border-radius:50%;
+  background:var(--teal-light);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:22px;
+  box-shadow:0 4px 14px rgba(26,138,114,.15);
+  flex-shrink:0;
+}
+.tb-prompt-icon svg{
+  width:22px;height:22px;stroke:var(--teal);stroke-width:1.8;
+  fill:none;stroke-linecap:round;stroke-linejoin:round;
+}
+.tb-prompt-text{
+  font-size:13px;color:var(--text-mid);line-height:1.55;
+  max-width:195px;font-weight:400;
+  letter-spacing:.1px;
+}
+.tb-prompt-hint{
+  font-size:10.5px;color:#b0c5c0;margin-top:20px;letter-spacing:.4px;
+}
+.tb-prompt-error{
+  font-size:11px;color:#c0655a;margin-top:12px;
+  max-width:195px;line-height:1.65;
+}
 .tb-content::-webkit-scrollbar{width:3px}
 .tb-content::-webkit-scrollbar-thumb{background:#c8e2dc;border-radius:2px}
 
@@ -242,6 +279,67 @@ body{
 
 /* ─ Photos Tab ─ */
 .ph-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+/* ─ Hero viewer ─ */
+.ph-hero-wrap{position:relative;border-radius:10px;overflow:hidden;background:var(--teal-pale);margin-bottom:10px}
+.ph-hero{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:opacity .18s}
+.ph-hero-counter{
+  position:absolute;bottom:8px;right:10px;
+  background:rgba(0,0,0,.45);color:#fff;
+  font-size:10.5px;padding:2px 9px;border-radius:12px;font-weight:600;
+}
+/* ─ Thumbnail strip ─ */
+.ph-strip-row{display:flex;align-items:center;gap:7px}
+.ph-arrow{
+  flex-shrink:0;width:28px;height:28px;border-radius:50%;
+  border:1.5px solid var(--border);background:#fff;color:var(--teal);
+  cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;line-height:1;
+}
+.ph-arrow:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+.ph-strip{display:flex;gap:5px;overflow-x:auto;flex:1;scrollbar-width:none}
+.ph-strip::-webkit-scrollbar{display:none}
+.ph-thumb{
+  flex-shrink:0;width:54px;height:42px;border-radius:6px;overflow:hidden;
+  cursor:pointer;border:2px solid transparent;transition:border-color .15s;
+  background:var(--teal-pale);
+}
+.ph-thumb.active{border-color:var(--teal)}
+.ph-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+/* ─ Expand button ─ */
+.ph-expand-btn{
+  display:block;width:100%;padding:8px;margin:10px 0;
+  border-radius:8px;border:1.5px solid rgba(26,138,114,.25);
+  background:#fff;color:var(--teal);font-size:12px;
+  cursor:pointer;font-weight:600;letter-spacing:.2px;
+  transition:all .15s;
+}
+.ph-expand-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+/* ─ Photo lightbox (inside panel) ─ */
+.ph-lb{
+  position:absolute;inset:0;z-index:200;
+  background:rgba(9,61,49,.82);
+  display:none;align-items:center;justify-content:center;
+  border-radius:16px;
+}
+.ph-lb.show{display:flex}
+.ph-lb-inner{
+  position:relative;max-width:88%;max-height:82%;
+  display:flex;align-items:center;justify-content:center;
+}
+.ph-lb-img{
+  max-width:100%;max-height:100%;
+  border-radius:10px;object-fit:contain;display:block;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
+}
+.ph-lb-close{
+  position:absolute;top:-14px;right:-14px;
+  width:30px;height:30px;border-radius:50%;
+  border:none;background:rgba(255,255,255,.18);backdrop-filter:blur(4px);
+  color:#fff;font-size:19px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.ph-lb-close:hover{background:rgba(255,255,255,.35)}
 .ph-card{
   border-radius:9px;aspect-ratio:4/3;
   background:linear-gradient(135deg,var(--c1),var(--c2));
@@ -256,6 +354,50 @@ body{
   background:rgba(0,0,0,.42);color:#fff;
   font-size:10px;padding:2px 6px;border-radius:4px;
 }
+
+/* ─ Contact Form ─ */
+.cf-title{font-size:13px;font-weight:700;color:var(--text-dark);margin-bottom:3px}
+.cf-helper{font-size:10.5px;color:var(--text-mute);line-height:1.5;margin-bottom:9px}
+.cf-form{display:flex;flex-direction:column;gap:5px}
+.cf-field{
+  padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:11.5px;outline:none;background:var(--teal-pale);
+  color:var(--text-dark);transition:border-color .18s;font-family:inherit;width:100%;box-sizing:border-box;
+}
+.cf-field:focus{border-color:var(--teal)}
+.cf-textarea{resize:none}
+.cf-submit{
+  padding:7px;background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+  color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;
+  cursor:pointer;transition:opacity .18s;width:100%;
+}
+.cf-submit:hover{opacity:.88}
+.cf-success{
+  display:none;text-align:center;padding:7px;
+  background:var(--teal-light);border-radius:8px;
+  font-size:11.5px;color:var(--teal-dark);font-weight:600;
+}
+/* ─ Other Ways section ─ */
+.cf-other{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.cf-other-title{
+  font-size:9.5px;text-transform:uppercase;letter-spacing:.9px;
+  color:var(--text-mute);font-weight:700;text-align:center;margin-bottom:8px;
+}
+.cf-sns-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px}
+.cf-sns-btn{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:7px 6px;border-radius:8px;border:1.5px solid var(--border);
+  background:#fff;color:var(--text-mid);text-decoration:none;
+  font-size:10px;font-weight:600;cursor:pointer;transition:all .17s;
+}
+.cf-sns-btn:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-pale)}
+.cf-sns-btn svg{width:18px;height:18px;flex-shrink:0}
+.cf-phone{
+  display:block;text-align:center;font-size:11px;font-weight:600;
+  color:var(--teal-dark);text-decoration:none;
+  padding:5px;border-radius:8px;transition:background .15s;
+}
+.cf-phone:hover{background:var(--teal-pale)}
 
 /* ─ Slides Tab ─ */
 .sl-slide{
@@ -397,44 +539,88 @@ body{
 .md-viewer{
   border-radius:12px;
   background:linear-gradient(145deg,var(--teal-deep) 0%,#0d3028 50%,#081e18 100%);
-  padding:18px;text-align:center;margin-bottom:10px;
+  padding:28px 18px;text-align:center;margin-bottom:14px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:158px;
+  min-height:240px;
   box-shadow:0 4px 20px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.04);
   border:1px solid rgba(26,138,114,.2);
+  cursor:pointer;
 }
 .cube{
-  width:70px;height:70px;
+  width:80px;height:80px;
   position:relative;transform-style:preserve-3d;
   animation:rotateCube 5s linear infinite;
-  margin-bottom:12px;
+  margin-bottom:16px;
 }
 @keyframes rotateCube{
   from{transform:rotateX(20deg) rotateY(0deg)}
   to{transform:rotateX(20deg) rotateY(360deg)}
 }
 .face{
-  position:absolute;width:70px;height:70px;
+  position:absolute;width:80px;height:80px;
   background:rgba(26,138,114,.15);
   border:1.5px solid rgba(26,138,114,.6);
   box-shadow:inset 0 0 14px rgba(26,138,114,.12),0 0 6px rgba(26,138,114,.08);
 }
-.face.fr{transform:translateZ(35px)}
-.face.bk{transform:rotateY(180deg) translateZ(35px)}
-.face.lt{transform:rotateY(-90deg) translateZ(35px)}
-.face.rt{transform:rotateY(90deg) translateZ(35px)}
-.face.tp{transform:rotateX(90deg) translateZ(35px)}
-.face.bt{transform:rotateX(-90deg) translateZ(35px)}
+.face.fr{transform:translateZ(40px)}
+.face.bk{transform:rotateY(180deg) translateZ(40px)}
+.face.lt{transform:rotateY(-90deg) translateZ(40px)}
+.face.rt{transform:rotateY(90deg) translateZ(40px)}
+.face.tp{transform:rotateX(90deg) translateZ(40px)}
+.face.bt{transform:rotateX(-90deg) translateZ(40px)}
 .md-label{color:#5ee8c0;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.9}
-.md-btns{display:flex;gap:7px;margin-bottom:10px}
-.md-btn{
-  flex:1;padding:7px 6px;border-radius:8px;
-  border:1.5px solid var(--border);background:#fff;
-  color:var(--teal);font-size:11.5px;cursor:pointer;
-  transition:all .17s;font-weight:600;
+.md-name-row{margin-bottom:10px}
+.md-fullbtn{
+  width:100%;padding:9px;border-radius:9px;
+  border:1.5px solid rgba(26,138,114,.3);background:#fff;
+  color:var(--teal);font-size:12px;cursor:pointer;
+  transition:all .17s;font-weight:600;letter-spacing:.2px;
 }
-.md-btn:hover{background:var(--teal-light);border-color:rgba(26,138,114,.25)}
+.md-fullbtn:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
 .md-specs{background:var(--teal-pale);border-radius:10px;padding:10px;border:1px solid var(--border)}
+/* ─ 3D modal (inside panel) ─ */
+.md-lb{
+  position:absolute;inset:0;z-index:200;
+  background:rgba(9,61,49,.85);
+  display:none;align-items:center;justify-content:center;
+  border-radius:16px;
+}
+.md-lb.show{display:flex}
+.md-lb-inner{
+  position:relative;width:92%;padding:48px 24px 36px;
+  background:linear-gradient(145deg,var(--teal-deep) 0%,#0d3028 55%,#081e18 100%);
+  border-radius:14px;border:1px solid rgba(26,138,114,.25);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 12px 48px rgba(0,0,0,.55);
+}
+.md-lb-cube{
+  width:180px;height:180px;
+  position:relative;transform-style:preserve-3d;
+  animation:rotateCube 5s linear infinite;
+  margin-bottom:28px;
+}
+.md-lb-face{
+  position:absolute;width:180px;height:180px;
+  background:rgba(26,138,114,.18);
+  border:1.5px solid rgba(26,138,114,.7);
+  box-shadow:inset 0 0 28px rgba(26,138,114,.15),0 0 10px rgba(26,138,114,.1);
+}
+.md-lb-face.fr{transform:translateZ(90px)}
+.md-lb-face.bk{transform:rotateY(180deg) translateZ(90px)}
+.md-lb-face.lt{transform:rotateY(-90deg) translateZ(90px)}
+.md-lb-face.rt{transform:rotateY(90deg) translateZ(90px)}
+.md-lb-face.tp{transform:rotateX(90deg) translateZ(90px)}
+.md-lb-face.bt{transform:rotateX(-90deg) translateZ(90px)}
+.md-lb-label{color:#5ee8c0;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;opacity:.9}
+.md-lb-close{
+  position:absolute;top:10px;right:12px;
+  width:30px;height:30px;border-radius:50%;
+  border:none;background:rgba(255,255,255,.12);backdrop-filter:blur(4px);
+  color:#fff;font-size:19px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.md-lb-close:hover{background:rgba(255,255,255,.28)}
 .sp-row{
   display:flex;justify-content:space-between;
   font-size:12px;padding:4.5px 0;
@@ -541,12 +727,12 @@ body{
 }
 .po-nav-sub{font-size:9px;font-weight:400;color:var(--text-mute)}
 .po-nav-item.active .po-nav-sub{color:var(--teal)}
-.po-detail{flex:1;overflow-y:auto;padding:13px 14px 16px;min-width:0}
+.po-detail{flex:1;overflow-y:auto;padding:12px 14px 16px;min-width:0}
 .po-detail::-webkit-scrollbar{width:3px}
 .po-detail::-webkit-scrollbar-thumb{background:#c8e2dc;border-radius:2px}
 .po-product-name{font-size:15px;font-weight:800;color:var(--text-dark);margin-bottom:2px;letter-spacing:-.2px}
 .po-product-sub{font-size:9.5px;color:var(--teal);font-weight:700;margin-bottom:10px;letter-spacing:.6px;text-transform:uppercase}
-.po-desc{font-size:11.5px;color:var(--text-mid);line-height:1.72;margin-bottom:12px}
+.po-desc{font-size:11.5px;color:var(--text-mid);line-height:1.65;margin-bottom:10px}
 .po-section-label{font-size:9px;font-weight:700;color:var(--text-mute);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px}
 .po-features{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .po-feature{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;background:var(--teal-pale);border-radius:8px;border:1px solid var(--border)}
@@ -560,6 +746,47 @@ body{
 .po-spec{background:#fff;border:1px solid var(--border);border-radius:7px;padding:7px 10px}
 .po-spec-key{font-size:9px;color:var(--text-mute);font-weight:600;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
 .po-spec-val{font-size:12px;color:var(--text-dark);font-weight:700}
+.po-img{width:100%;height:88px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;position:relative;overflow:hidden;flex-shrink:0}
+.po-img-label{font-size:19px;font-weight:800;color:rgba(255,255,255,.92);letter-spacing:-.3px;position:relative;z-index:1}
+.po-img-bg{position:absolute;right:-14px;bottom:-14px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.1)}
+.po-img-bg2{position:absolute;left:-18px;top:-18px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.07)}
+.po-bullets{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.po-bullet{display:flex;align-items:flex-start;gap:7px;font-size:10.5px;color:var(--text-mid);line-height:1.45}
+.po-bullet-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:4px}
+.po-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.po-action-btn{padding:7px 5px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--teal-dark);font-size:10px;font-weight:600;cursor:pointer;transition:all .17s;display:flex;align-items:center;justify-content:center;gap:4px}
+.po-action-btn:hover{background:var(--teal-pale);border-color:var(--teal)}
+.po-action-btn.po-primary{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%);color:#fff;border-color:var(--teal-dark)}
+.po-action-btn.po-primary:hover{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal-deep) 100%)}
+.po-action-btn svg{stroke:currentColor;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+@keyframes po-slidein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.po-card{animation:po-slidein .28s ease;padding:2px}
+/* ─ Pricing card ─ */
+.pr-card{animation:po-slidein .28s ease;text-align:center}
+.pr-series{font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+.pr-name{font-size:15px;font-weight:700;color:var(--text-dark);margin-bottom:14px}
+.pr-img{
+  width:100%;height:160px;object-fit:contain;display:block;
+  margin:0 auto 16px;border-radius:10px;background:var(--teal-pale);
+}
+.pr-price-block{
+  background:var(--teal-pale);border:1px solid var(--border);
+  border-radius:12px;padding:20px 16px;margin-bottom:12px;
+}
+.pr-price-label{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-mute);font-weight:600;margin-bottom:7px}
+.pr-price{font-size:26px;font-weight:800;color:var(--teal-dark);letter-spacing:-.4px}
+.pr-note{font-size:11px;color:var(--text-mute);line-height:1.6;margin-bottom:14px}
+.pr-cta{font-size:12.5px;margin-top:0}
+.po-card-img{width:100%;height:148px;object-fit:cover;border-radius:10px;display:block;margin-bottom:12px;background:var(--teal-pale)}
+.po-card-body{}
+.vc-fill{display:flex;flex-direction:column;height:100%}
+.vc-thumb{position:relative;cursor:pointer;border-radius:10px;overflow:hidden;background:#000;flex:1;min-height:0;margin-bottom:12px;width:100%}
+.vc-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:.92;transition:opacity .17s}
+.vc-thumb:hover img{opacity:.78}
+.vc-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.62);display:flex;align-items:center;justify-content:center;pointer-events:none;transition:transform .17s}
+.vc-thumb:hover .vc-play{transform:translate(-50%,-50%) scale(1.1)}
+.vc-play svg{width:18px;height:18px;fill:#fff;margin-left:3px}
+.vc-no-video{font-size:11.5px;color:var(--text-mute);background:var(--teal-pale);border-radius:8px;padding:14px;text-align:center;margin-bottom:12px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -613,6 +840,9 @@ body{
           muted
           id="avatarVideo"
         ></video>
+        <div class="av-tap-overlay" id="avTapOverlay" onclick="avTapToPlay()">
+          <span class="av-tap-text">&#9654; Tap to Play</span>
+        </div>
       </div>
       <div class="av-name">AI Agent Daniel</div>
       <div class="av-status">
@@ -623,88 +853,13 @@ body{
 
     <!-- Right · Tabs -->
     <div class="tb-panel">
-      <!-- Tab nav (5 stacked buttons) -->
-      <div class="tb-nav" role="tablist">
-        <button class="tb-btn"        id="tab-text"   role="tab" aria-selected="false" onclick="openTab('text')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Product Overview
-        </button>
-        <button class="tb-btn"        id="tab-photos" role="tab" aria-selected="false" onclick="openTab('photos')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span> Product Gallery
-        </button>
-        <button class="tb-btn"        id="tab-slides" role="tab" aria-selected="false" onclick="openTab('slides')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span> Watch Videos
-        </button>
-        <button class="tb-btn"        id="tab-videos" role="tab" aria-selected="false" onclick="openTab('videos')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span> 3D View
-        </button>
-        <button class="tb-btn"        id="tab-model"  role="tab" aria-selected="false" onclick="openTab('model')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span> Price Guide
-        </button>
-        <button class="tb-btn"        id="tab-contact" role="tab" aria-selected="false" onclick="openTab('contact')">
-          <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.71 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.91.35 1.85.58 2.81.71A2 2 0 0 1 21.5 16.1z"/></svg></span> Contact Sales
-        </button>
-      </div>
 
       <!-- Tab content area -->
       <div class="tb-area">
 
         <!-- ─ Product Overview ─ -->
         <div class="tb-content" id="ct-text" role="tabpanel">
-          <div class="po-layout">
-
-            <!-- Left Sidebar -->
-            <div class="po-sidebar">
-              <button class="po-nav-item active" onclick="selectSeries(this,'spot')">
-                <span>Spot</span><span class="po-nav-sub">Series</span>
-              </button>
-              <button class="po-nav-item" onclick="selectSeries(this,'cue')">
-                <span>Cue</span><span class="po-nav-sub">Series</span>
-              </button>
-              <button class="po-nav-item" onclick="selectSeries(this,'framer')">
-                <span>Framer</span><span class="po-nav-sub">Series</span>
-              </button>
-              <button class="po-nav-item" onclick="selectSeries(this,'mime')">
-                <span>Mime</span><span class="po-nav-sub">Series</span>
-              </button>
-            </div>
-
-            <!-- Right Detail — Spot pre-loaded -->
-            <div class="po-detail" id="po-detail">
-              <div class="po-product-name">Spot 18</div>
-              <div class="po-product-sub">Spot Series</div>
-              <p class="po-desc">The Spot 18 is a compact AI teleprompting device engineered for on-the-go presenters and content creators. Its ultra-portable form factor pairs with Crystal Prompter software for seamless script delivery at any angle.</p>
-              <div class="po-section-label">Highlights</div>
-              <div class="po-features">
-                <div class="po-feature">
-                  <div class="po-feat-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-                  <div><span class="po-feat-label">Wide-angle Beam Splitter</span><span class="po-feat-detail">90° anti-reflective glass for natural eye contact</span></div>
-                </div>
-                <div class="po-feature">
-                  <div class="po-feat-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-                  <div><span class="po-feat-label">AI Auto-scroll</span><span class="po-feat-detail">Voice-paced scrolling adapts to your speaking rhythm</span></div>
-                </div>
-                <div class="po-feature">
-                  <div class="po-feat-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-                  <div><span class="po-feat-label">Wireless Control</span><span class="po-feat-detail">Bluetooth remote &amp; mobile app included</span></div>
-                </div>
-              </div>
-              <div class="po-section-label">Tags</div>
-              <div class="po-tags">
-                <span class="po-tag">Portable</span>
-                <span class="po-tag">AI-Powered</span>
-                <span class="po-tag">Bluetooth</span>
-                <span class="po-tag">Compact</span>
-              </div>
-              <div class="po-section-label">Specifications</div>
-              <div class="po-specs">
-                <div class="po-spec"><div class="po-spec-key">Screen</div><div class="po-spec-val">18 cm</div></div>
-                <div class="po-spec"><div class="po-spec-key">Weight</div><div class="po-spec-val">1.2 kg</div></div>
-                <div class="po-spec"><div class="po-spec-key">Battery</div><div class="po-spec-val">6 hrs</div></div>
-                <div class="po-spec"><div class="po-spec-key">Connect</div><div class="po-spec-val">BT 5.0</div></div>
-              </div>
-            </div>
-
-          </div>
+          <div class="po-detail" id="po-detail"></div>
         </div>
 
         <!-- ─ Photos Content ─ -->
@@ -839,28 +994,28 @@ body{
               <div class="wv-btn-group" style="flex-direction:column">
                 <div class="prod-grid">
                   <button class="wv-btn" onclick="playVideo('prod-framer27')">
-                    <span class="wv-play">▶</span> Framer 27
+                    <span class="wv-play">▶</span> Framer 27 Intro
                   </button>
                   <button class="wv-btn" onclick="playVideo('prod-framer24')">
-                    <span class="wv-play">▶</span> Framer 24
+                    <span class="wv-play">▶</span> Framer 24 Intro
                   </button>
                   <button class="wv-btn" onclick="playVideo('prod-flex15')">
-                    <span class="wv-play">▶</span> Flex 15
+                    <span class="wv-play">▶</span> Flex 15 Intro
                   </button>
                   <button class="wv-btn" onclick="playVideo('prod-cue32')">
-                    <span class="wv-play">▶</span> Cue 32
+                    <span class="wv-play">▶</span> Cue 32 Intro
                   </button>
                   <button class="wv-btn" onclick="playVideo('prod-cue27')">
-                    <span class="wv-play">▶</span> Cue 27
+                    <span class="wv-play">▶</span> Cue 27 Intro
                   </button>
                   <button class="wv-btn" onclick="playVideo('prod-cue24')">
-                    <span class="wv-play">▶</span> Cue 24
+                    <span class="wv-play">▶</span> Cue 24 Intro
                   </button>
                   <button class="wv-btn" onclick="playVideo('prod-clone16')">
-                    <span class="wv-play">▶</span> Clone 16
+                    <span class="wv-play">▶</span> Clone 16 Intro
                   </button>
                   <button class="wv-btn" onclick="playVideo('prod-spot18')">
-                    <span class="wv-play">▶</span> Spot 18
+                    <span class="wv-play">▶</span> Spot 18 Intro
                   </button>
                 </div>
                 <div class="wv-thumb-preview" id="prod-thumb" onclick="openVideoPopup(currentProdId)" style="margin:8px 0 0">
@@ -880,7 +1035,7 @@ body{
 
         <!-- ─ 3D View Content ─ -->
         <div class="tb-content" id="ct-videos" role="tabpanel">
-          <div class="md-viewer">
+          <div class="md-viewer" id="md-viewer-el">
             <div class="cube" id="cube">
               <div class="face fr"></div>
               <div class="face bk"></div>
@@ -891,60 +1046,49 @@ body{
             </div>
             <div class="md-label">CRYSTAL · 3D PREVIEW</div>
           </div>
-          <div class="md-btns">
-            <button class="md-btn" id="pauseBtn" onclick="toggleRotation()">⏸ Pause</button>
-            <button class="md-btn">⤡ Fullscreen</button>
-            <button class="md-btn">⤓ Download</button>
-          </div>
-          <div class="md-specs">
-            <div class="sp-row"><span class="sp-k">Polygons</span><span class="sp-v">12,480</span></div>
-            <div class="sp-row"><span class="sp-k">Textures</span><span class="sp-v">4K PBR</span></div>
-            <div class="sp-row"><span class="sp-k">Format</span><span class="sp-v">GLTF 2.0</span></div>
-            <div class="sp-row"><span class="sp-k">File Size</span><span class="sp-v">3.2 MB</span></div>
-            <div class="sp-row"><span class="sp-k">License</span><span class="sp-v">Commercial</span></div>
-          </div>
+          <button class="md-fullbtn" onclick="open3DModal()">&#8599; Expand 3D View</button>
         </div>
 
         <!-- ─ Price Guide Content ─ -->
         <div class="tb-content" id="ct-model" role="tabpanel">
-          <div class="md-specs" style="margin-top:8px">
-            <div class="sp-row" style="font-weight:700;font-size:13px;color:var(--teal-dark)"><span class="sp-k">Plan</span><span class="sp-v">Price</span></div>
-            <div class="sp-row"><span class="sp-k">Starter</span><span class="sp-v">Free</span></div>
-            <div class="sp-row"><span class="sp-k">Pro</span><span class="sp-v">$19 / mo</span></div>
-            <div class="sp-row"><span class="sp-k">Business</span><span class="sp-v">$49 / mo</span></div>
-            <div class="sp-row"><span class="sp-k">Enterprise</span><span class="sp-v">Custom</span></div>
-          </div>
-          <div class="tc-tags" style="margin-top:12px">
-            <span class="tc-tag">No Credit Card</span>
-            <span class="tc-tag">Cancel Anytime</span>
-            <span class="tc-tag">99.9% Uptime SLA</span>
-          </div>
-          <p class="tc-p" style="margin-top:10px;font-size:12px;color:var(--text-mute)">All plans include core AI features, multilingual support, and priority chat assistance.</p>
+          <p class="tc-p" style="margin-top:4px;font-size:12.5px;color:var(--text-mid)">Use the <strong>Check Pricing</strong> button below to look up pricing for a specific product.</p>
         </div>
 
         <!-- ─ Contact Sales Content ─ -->
         <div class="tb-content" id="ct-contact" role="tabpanel">
-          <p class="tc-h" style="margin-bottom:10px">Contact Sales</p>
-          <form id="contactForm" onsubmit="submitContact(event)" style="display:flex;flex-direction:column;gap:8px">
-            <input type="text"  id="cf-name"  placeholder="Your Name"         required
-              style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;outline:none;background:var(--teal-pale);color:var(--text-dark);transition:border-color .18s"
-              onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'">
-            <input type="email" id="cf-email" placeholder="Email Address"     required
-              style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;outline:none;background:var(--teal-pale);color:var(--text-dark);transition:border-color .18s"
-              onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'">
-            <input type="text"  id="cf-company" placeholder="Company (optional)"
-              style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;outline:none;background:var(--teal-pale);color:var(--text-dark);transition:border-color .18s"
-              onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'">
-            <textarea id="cf-msg" placeholder="How can we help you?" rows="3" required
-              style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;outline:none;background:var(--teal-pale);color:var(--text-dark);resize:none;transition:border-color .18s;font-family:inherit"
-              onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'"></textarea>
-            <button type="submit"
-              style="padding:9px;background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .18s"
-              onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Send Message</button>
-            <div id="cf-success" style="display:none;text-align:center;padding:10px;background:var(--teal-light);border-radius:8px;font-size:12.5px;color:var(--teal-dark);font-weight:600">
-              ✓ Message sent! We'll get back to you shortly.
-            </div>
+
+          <!-- Form -->
+          <p class="cf-title">Contact Our Sales Team</p>
+          <p class="cf-helper">Our sales team is ready to assist you. Please fill out the form below.</p>
+          <form id="contactForm" class="cf-form" onsubmit="submitContact(event)">
+            <input class="cf-field" type="text"  id="cf-name"    placeholder="Name"              required>
+            <input class="cf-field" type="email" id="cf-email"   placeholder="Email Address"     required>
+            <input class="cf-field" type="text"  id="cf-company" placeholder="Company (optional)">
+            <textarea class="cf-field cf-textarea" id="cf-msg" rows="2" required>I would like more information about Crystal Prompter products.</textarea>
+            <button class="cf-submit" type="submit">Send Inquiry</button>
+            <div id="cf-success" class="cf-success">&#10003; Message sent! We'll get back to you shortly.</div>
           </form>
+
+          <!-- Other Ways -->
+          <div class="cf-other">
+            <div class="cf-other-title">Other Ways to Contact Us</div>
+            <div class="cf-sns-row">
+              <a class="cf-sns-btn" href="#" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3C6.48 3 2 6.69 2 11.25c0 2.85 1.72 5.37 4.34 6.93l-.9 3.32 3.57-2.18c.93.25 1.93.39 2.99.39 5.52 0 10-3.69 10-8.25S17.52 3 12 3zm1.01 11.1l-2.57-2.73-5.01 2.73 5.52-5.85 2.63 2.73 4.95-2.73-5.52 5.85z"/>
+                </svg>
+                KakaoTalk
+              </a>
+              <a class="cf-sns-btn" href="#" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+                Facebook
+              </a>
+            </div>
+            <a class="cf-phone" href="tel:+82325760277">&#128222; Call Us: +82 32-576-0277</a>
+          </div>
+
         </div>
 
         <!-- Empty state — visible when no tab is active -->
@@ -957,16 +1101,38 @@ body{
           <p class="tb-empty-msg">Select a tab or ask anything to get started.</p>
         </div>
 
+        <!-- Centered nav prompt — shown when a bottom button is clicked -->
+        <div class="tb-prompt" id="tb-prompt">
+          <div class="tb-prompt-icon" id="tb-prompt-icon"></div>
+          <p class="tb-prompt-text" id="tb-prompt-text"></p>
+          <p class="tb-prompt-hint" id="tb-prompt-hint">Type the product name and press Enter</p>
+          <p class="tb-prompt-error" id="tb-prompt-error" style="display:none"></p>
+        </div>
+
       </div><!-- .tb-area -->
     </div><!-- .tb-panel -->
   </div><!-- .p-main -->
 
-  <!-- Row 3 · Quick Chips -->
-  <div class="p-chips" role="toolbar" aria-label="Quick prompts">
-    <button class="chip" onclick="doChip('tab12')">Show Tab 12</button>
-    <button class="chip" onclick="doChip('compare')">Compare</button>
-    <button class="chip" onclick="doChip('setup')">Setup guide</button>
-    <button class="chip" onclick="doChip('shipping')">Shipping</button>
+  <!-- Row 3 · Tab Navigation -->
+  <div class="tb-nav" role="tablist">
+    <button class="tb-btn" id="tab-text"    role="tab" aria-selected="false" onclick="handleNavClick('explore',this)">
+      <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Explore Products
+    </button>
+    <button class="tb-btn" id="tab-photos"  role="tab" aria-selected="false" onclick="handleNavClick('photos',this)">
+      <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span> View Photos
+    </button>
+    <button class="tb-btn" id="tab-slides"  role="tab" aria-selected="false" onclick="handleNavClick('videos',this)">
+      <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span> Watch Videos
+    </button>
+    <button class="tb-btn" id="tab-videos"  role="tab" aria-selected="false" onclick="handleNavClick('3d',this)">
+      <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span> View in 3D
+    </button>
+    <button class="tb-btn" id="tab-model"   role="tab" aria-selected="false" onclick="handleNavClick('pricing',this)">
+      <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span> Check Pricing
+    </button>
+    <button class="tb-btn" id="tab-contact" role="tab" aria-selected="false" onclick="playAvatarVideo('contact');openTab('contact');document.querySelectorAll('.tb-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false')});this.classList.add('active');this.setAttribute('aria-selected','true')">
+      <span class="tb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.71 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.91.35 1.85.58 2.81.71A2 2 0 0 1 21.5 16.1z"/></svg></span> Contact Sales
+    </button>
   </div>
 
   <!-- Row 4 · Input Bar -->
@@ -1003,6 +1169,30 @@ body{
     </button>
   </div>
 
+  <!-- ─ Photo lightbox (inside panel) ─ -->
+  <div id="ph-lightbox" class="ph-lb" onclick="closePhotoLightbox(event)">
+    <div class="ph-lb-inner" onclick="event.stopPropagation()">
+      <button class="ph-lb-close" onclick="closePhotoLightbox()">&times;</button>
+      <img class="ph-lb-img" id="ph-lb-img" src="" alt="Product photo">
+    </div>
+  </div>
+
+  <!-- ─ 3D modal (inside panel) ─ -->
+  <div id="md-lightbox" class="md-lb" onclick="close3DModal(event)">
+    <div class="md-lb-inner" onclick="event.stopPropagation()">
+      <button class="md-lb-close" onclick="close3DModal()">&times;</button>
+      <div class="md-lb-cube" id="md-lb-cube">
+        <div class="md-lb-face fr"></div>
+        <div class="md-lb-face bk"></div>
+        <div class="md-lb-face lt"></div>
+        <div class="md-lb-face rt"></div>
+        <div class="md-lb-face tp"></div>
+        <div class="md-lb-face bt"></div>
+      </div>
+      <div class="md-lb-label" id="md-lb-label">CRYSTAL · 3D PREVIEW</div>
+    </div>
+  </div>
+
 </div><!-- #panel -->
 
 <script>
@@ -1032,14 +1222,14 @@ const videos = {
   'install-en-mac': { label:'SW Installation Guide — English · MacOS',   ytId:'hck8hsSO3FQ' },
   'install-kr-win': { label:'SW Installation Guide — Korean · Windows',  ytId:'rncmQn1jbNk' },
   'install-kr-mac': { label:'SW Installation Guide — Korean · MacOS',    ytId:'Ua9NqMJFGlg' },
-  'prod-framer27':  { label:'Framer 27',  ytId:'EPa71dWjLKc' },
-  'prod-framer24':  { label:'Framer 24',  ytId:'X-3QRIOwAN0' },
-  'prod-flex15':    { label:'Flex 15',    ytId:'eeXqXDttNX4' },
-  'prod-cue32':     { label:'Cue 32',     ytId:'ZFNiWKEY71s' },
-  'prod-cue27':     { label:'Cue 27',     ytId:'EPa71dWjLKc' },
-  'prod-cue24':     { label:'Cue 24',     ytId:'jmy31E2XFgk' },
-  'prod-clone16':   { label:'Clone 16',   ytId:'IJlVE8LUHZ0' },
-  'prod-spot18':    { label:'Spot 18',    ytId:'EPa71dWjLKc' },
+  'prod-framer27':  { label:'Framer 27 Intro',  ytId:'EPa71dWjLKc' },
+  'prod-framer24':  { label:'Framer 24 Intro',  ytId:'X-3QRIOwAN0' },
+  'prod-flex15':    { label:'Flex 15 Intro',    ytId:'eeXqXDttNX4' },
+  'prod-cue32':     { label:'Cue 32 Intro',     ytId:'ZFNiWKEY71s' },
+  'prod-cue27':     { label:'Cue 27 Intro',     ytId:'EPa71dWjLKc' },
+  'prod-cue24':     { label:'Cue 24 Intro',     ytId:'jmy31E2XFgk' },
+  'prod-clone16':   { label:'Clone 16 Intro',   ytId:'IJlVE8LUHZ0' },
+  'prod-spot18':    { label:'Spot 18 Intro',    ytId:'EPa71dWjLKc' },
 };
 
 let currentCpId = null;
@@ -1205,6 +1395,57 @@ function toggleMic(){
   recognition.start();
 }
 
+// ── Avatar video playback ─────────────────
+const navVideoMap = {
+  explore: 'videos/Explore Products.mp4',
+  photos:  'videos/View Photos.mp4',
+  videos:  'videos/Watch Videos.mp4',
+  '3d':    'videos/View 3D.mp4',
+  pricing: 'videos/Check Pricing.mp4',
+  contact: 'videos/Contact Sales.mp4',
+};
+
+function showAvTap(){ const o=document.getElementById('avTapOverlay'); if(o) o.classList.add('show'); }
+function hideAvTap(){ const o=document.getElementById('avTapOverlay'); if(o) o.classList.remove('show'); }
+
+function avTapToPlay(){
+  const vid=document.getElementById('avatarVideo');
+  if(!vid) return;
+  hideAvTap();
+  vid.muted=!speakerOn;
+  vid.play().catch(()=>{ vid.muted=true; vid.play(); });
+}
+
+function resetAvatarToIdle(){
+  const vid=document.getElementById('avatarVideo');
+  if(!vid) return;
+  hideAvTap();
+  vid.pause();
+}
+
+function playAvatarVideo(key){
+  const vid=document.getElementById('avatarVideo');
+  if(!vid) return;
+  const src=navVideoMap[key];
+  if(!src) return;
+  hideAvTap();
+  vid.pause();
+  vid.currentTime=0;
+  vid.src=src;
+  vid.muted=!speakerOn;
+  vid.load();
+  vid.play().catch(()=>{
+    vid.muted=true;
+    vid.play().catch(()=>showAvTap());
+  });
+}
+
+// Reset to idle when nav video finishes
+(function(){
+  const vid=document.getElementById('avatarVideo');
+  if(vid) vid.addEventListener('ended', resetAvatarToIdle);
+})();
+
 // ── Speaker: mute / unmute avatar video ──
 let speakerOn = true;
 
@@ -1245,72 +1486,218 @@ function closePanel(){
 //  Product Overview — series data & renderer
 // ════════════════════════════════════════════
 const seriesData = {
-  spot: {
-    name:'Spot 18', sub:'Spot Series',
-    desc:'The Spot 18 is a compact AI teleprompting device engineered for on-the-go presenters and content creators. Its ultra-portable form factor pairs with Crystal Prompter software for seamless script delivery at any angle.',
-    features:[
-      {label:'Wide-angle Beam Splitter', detail:'90° anti-reflective glass for natural eye contact'},
-      {label:'AI Auto-scroll',           detail:'Voice-paced scrolling adapts to your speaking rhythm'},
-      {label:'Wireless Control',         detail:'Bluetooth remote & mobile app included'},
-    ],
-    tags:['Portable','AI-Powered','Bluetooth','Compact'],
-    specs:[{k:'Screen',v:'18 cm'},{k:'Weight',v:'1.2 kg'},{k:'Battery',v:'6 hrs'},{k:'Connect',v:'BT 5.0'}]
-  },
-  cue: {
-    name:'Cue 32', sub:'Cue Series',
-    desc:'The Cue Series delivers studio-grade prompting performance for broadcast and professional video production. Ultra-bright displays and precision optics ensure your message comes through with total clarity.',
-    features:[
-      {label:'Ultra-Bright Display', detail:'1500 nit brightness for outdoor & studio use'},
-      {label:'Precision Optics',     detail:'High-transparency beam splitter glass'},
-      {label:'Multi-device Sync',    detail:'Sync up to 4 units for multi-camera setups'},
-    ],
-    tags:['Studio','Broadcast','Multi-Sync','Outdoor'],
-    specs:[{k:'Screen',v:'32 cm'},{k:'Weight',v:'2.8 kg'},{k:'Brightness',v:'1500 nit'},{k:'Input',v:'HDMI/USB'}]
-  },
-  framer: {
-    name:'Framer 27', sub:'Framer Series',
-    desc:'The Framer Series combines ergonomic camera mounting with professional prompting in a single elegant unit. Ideal for live streaming, corporate presentations, and online education.',
-    features:[
-      {label:'Integrated Camera Mount', detail:'Supports cameras up to 3 kg payload'},
-      {label:'One-touch Calibration',   detail:'Auto-aligns prompter glass to lens center'},
-      {label:'Silent Operation',        detail:'Fan-less cooling for noise-free recording'},
-    ],
-    tags:['Streaming','Education','Fan-less','Ergonomic'],
-    specs:[{k:'Screen',v:'27 cm'},{k:'Weight',v:'2.1 kg'},{k:'Payload',v:'3 kg'},{k:'Mount',v:'¼" + ⅜"'}]
-  },
-  mime: {
-    name:'Mime Pro', sub:'Mime Series',
-    desc:'The Mime Series is Crystal Prompter\'s flagship line for high-volume production environments. Purpose-built for news studios, live events, and enterprise deployments requiring maximum reliability.',
-    features:[
-      {label:'Rack-mount Ready',    detail:'Standard 19" rack-compatible control unit'},
-      {label:'Redundant Power',     detail:'Dual PSU for zero-downtime live production'},
-      {label:'Enterprise Control',  detail:'Central management for up to 20 units'},
-    ],
-    tags:['Enterprise','Rack-mount','Live Events','Redundant'],
-    specs:[{k:'Screen',v:'42 cm'},{k:'Weight',v:'4.5 kg'},{k:'Units',v:'Up to 20'},{k:'Support',v:'24/7'}]
-  }
+  tab12:    { name:'Tab 12',    series:'Spot Series',   img:'https://static.wixstatic.com/media/d0630a_7832a7f213cf459d8403c7460a991e2e~mv2.png',   desc:'Ultra-simple 12-inch iPad teleprompter for effortless on-site setup and smooth field performance.',         highlights:['iPad/tablet support','Foldable transport design','Quick intuitive setup','Beginner-friendly'] },
+  flex15:   { name:'Flex 15',   series:'Spot Series',   img:'https://static.wixstatic.com/media/d0630a_f6b3fc7a759942a780f6c70627fe7a45~mv2.png',   desc:'Portable teleprompter for laptop screens up to 15.6 inches with foldable, cost-efficient design.',      highlights:['15.6" laptop compatible','Foldable assembly','Studio and field ready','Cost-efficient'] },
+  clone16:  { name:'Clone 16',  series:'Spot Series',   img:'https://static.wixstatic.com/media/d0630a_7105d15163c240729eaa6cb65ac8b043~mv2.png',   desc:'HDMI-connected portable teleprompter with 16:9 widescreen for interviews and product shoots.',           highlights:['HDMI laptop connection','16:9 widescreen display','Instant script editing','Interview-ready'] },
+  spot18:   { name:'Spot 18',   series:'Spot Series',   img:'https://static.wixstatic.com/media/d0630a_b258d0d5a45548ce9226fae4b6b2931a~mv2.png',   desc:'First 18-inch teleprompter built for both studio and field with switchable 16:9 and 4:3 modes.',          highlights:['18-inch large display','Switchable 16:9/4:3','Studio and field use','Medium team ready'] },
+  folder22n:{ name:'Folder 22N',series:'Spot Series',   img:'https://static.wixstatic.com/media/d0630a_ac5218148a4e4920964186ca934a2c72~mv2.png',   desc:'First 22-inch high-brightness teleprompter combining large display with portable field performance.',     highlights:['22-inch high-brightness','Switchable 16:9/4:3','High-end at competitive price','Field ready'] },
+  cue24:    { name:'Cue 24',    series:'Cue Series',    img:'https://static.wixstatic.com/media/d0630a_a36e5bf9e50449b294ec877e9525391c~mv2.png',   desc:'24-inch 1000 cd/m² teleprompter delivering exceptional video quality for all levels of creators.',        highlights:['24" 1000 cd/m² display','16:9 widescreen','Pro and beginner friendly','Studio/field ready'] },
+  cue27:    { name:'Cue 27',    series:'Cue Series',    img:'https://static.wixstatic.com/media/d0630a_5255d1b2f860492ebef0d04aa98144bf~mv2.png',   desc:'High-performance 27-inch teleprompter with premium 1000 cd/m² display and outstanding portability.',    highlights:['27" 1000 cd/m² display','Portable premium build','16:9 widescreen','Studio and field use'] },
+  cue32:    { name:'Cue 32',    series:'Cue Series',    img:'https://static.wixstatic.com/media/d0630a_a8e1d26dcc52403dba18768e72585e21~mv2.png',   desc:'Large-format 32-inch broadcast teleprompter with 1000 cd/m² display for professional production.',       highlights:['32" 1000 cd/m² display','Broadcast-grade build','16:9 versatile format','Pro performance'] },
+  framer24: { name:'Framer 24', series:'Framer Series', img:'https://static.wixstatic.com/media/d0630a_19abe69304b446b3955f93307ffaa12b~mv2.png',   desc:'Mid-sized DIY teleprompter letting professionals mount their own monitor with a 4K flip converter.',      highlights:['DIY monitor mounting','4K flip converter','Affordable mid-size','Pro and creator ready'] },
+  framer27: { name:'Framer 27', series:'Framer Series', img:'https://static.wixstatic.com/media/d0630a_a0ceea5d7ac3470a9bb77d115fd402ae~mv2.png',   desc:'Revolutionary DIY teleprompter with custom 4K flip converter for stable, high-quality output.',          highlights:['Mount your own monitor','Custom 4K converter','Lightweight design','Creator and pro ready'] },
+  framer32: { name:'Framer 32', series:'Framer Series', img:'https://static.wixstatic.com/media/d0630a_6b6a273d89914d5b937926477ea10668~mv2.png',   desc:'Large DIY teleprompter frame with 4K flip converter for custom monitor mounting and stable output.',      highlights:['32-inch DIY frame','4K flip converter','Custom monitor setup','Studio/field stable'] },
+  mime24:   { name:'Mime 24',   series:'Mime Series',   img:'https://static.wixstatic.com/media/d0630a_d5be528d1132491087e519a40ba74325~mv2.png',   desc:'PGM monitor with real-time broadcast view, flip-screen technology, and adjustable bracket.',              highlights:['Real-time PGM monitor','Flip-screen mirroring','Adjustable angle bracket','Any lighting'] },
+  mime27:   { name:'Mime 27',   series:'Mime Series',   img:'https://static.wixstatic.com/media/d0630a_f34e2bde7539409a9a227c9531eb1be1~mv2.png',   desc:'27-inch PGM monitor with flip-screen technology for real-time broadcast visibility in any light.',        highlights:['27" PGM monitor','Flip-screen mirroring','Adjustable bracket','All lighting conditions'] },
+  mime32:   { name:'Mime 32',   series:'Mime Series',   img:'https://static.wixstatic.com/media/d0630a_cef2e6e781bf4592ac53228f84a31585~mv2.png',   desc:'4K PGM monitor with real-time live broadcast display and flip-screen for studio flexibility.',             highlights:['4K PGM monitor','Live broadcast display','Flip-screen movement match','Studio flexible'] },
 };
 
 function renderPoDetail(id){
   const s = seriesData[id]; if(!s) return '';
-  const chk = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
-  const feats = s.features.map(f=>`
-    <div class="po-feature">
-      <div class="po-feat-icon">${chk}</div>
-      <div><span class="po-feat-label">${f.label}</span><span class="po-feat-detail">${f.detail}</span></div>
-    </div>`).join('');
-  const tags  = s.tags.map(t=>`<span class="po-tag">${t}</span>`).join('');
-  const specs = s.specs.map(sp=>`<div class="po-spec"><div class="po-spec-key">${sp.k}</div><div class="po-spec-val">${sp.v}</div></div>`).join('');
+  const bullets = s.highlights.map(h=>`<div class="po-bullet"><span class="po-bullet-dot"></span><span>${h}</span></div>`).join('');
   return `
-    <div class="po-product-name">${s.name}</div>
-    <div class="po-product-sub">${s.sub}</div>
-    <p class="po-desc">${s.desc}</p>
-    <div class="po-section-label">Highlights</div>
-    <div class="po-features">${feats}</div>
-    <div class="po-section-label">Tags</div>
-    <div class="po-tags">${tags}</div>
-    <div class="po-section-label">Specifications</div>
-    <div class="po-specs">${specs}</div>`;
+    <div class="po-card">
+      <img class="po-card-img" src="${s.img}" alt="${s.name}" loading="lazy">
+      <div class="po-card-body">
+        <div class="po-product-sub">${s.series}</div>
+        <div class="po-product-name">${s.name}</div>
+        <p class="po-desc">${s.desc}</p>
+        <div class="po-section-label">Highlights</div>
+        <div class="po-bullets">${bullets}</div>
+        <div class="po-actions">
+          <button class="ph-expand-btn" style="margin:0;font-size:11.5px;padding:8px 4px">Request Quote</button>
+          <button class="ph-expand-btn" style="margin:0;font-size:11.5px;padding:8px 4px">Buy Now</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderVideoCard(key){
+  const s = seriesData[key]; if(!s) return '';
+  const vidKey = productVideoId[key];
+  const entry  = vidKey ? videos[vidKey] : null;
+  const ytId   = entry ? entry.ytId : null;
+  const thumb  = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+  const playIcon = `<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+  const videoSection = ytId
+    ? `<div class="vc-thumb" onclick="openVideoPopup('${ytId}')">
+         <img src="${thumb}" alt="${s.name} video" loading="lazy">
+         <div class="vc-play">${playIcon}</div>
+       </div>`
+    : `<div class="vc-no-video">No video available for ${s.name} yet.<br>Check back soon or explore other products.</div>
+       <button class="po-action-btn po-primary" style="width:100%" onclick="openProductMode('${key}','explore')">View Product Details</button>`;
+  return `
+    <div class="vc-fill">
+      <div class="po-product-sub" style="margin-bottom:2px">${s.series}</div>
+      <div class="po-product-name" style="margin-bottom:12px">Introducing ${s.name}</div>
+      ${videoSection}
+    </div>`;
+}
+
+// ─ Photo viewer state ─
+let phPhotos = [];
+let phCurrentIndex = 0;
+
+function phSetPhoto(idx){
+  phCurrentIndex = idx;
+  const hero    = document.getElementById('ph-hero');
+  const counter = document.getElementById('ph-counter');
+  const thumbs  = document.querySelectorAll('.ph-thumb');
+  if(hero){
+    hero.style.opacity = '0';
+    setTimeout(() => { hero.src = phPhotos[idx]; hero.style.opacity = '1'; }, 160);
+  }
+  if(counter) counter.textContent = (idx + 1) + ' / ' + phPhotos.length;
+  thumbs.forEach((t, i) => t.classList.toggle('active', i === idx));
+  const active = thumbs[idx];
+  if(active) active.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+}
+
+function phNav(dir){
+  const next = (phCurrentIndex + dir + phPhotos.length) % phPhotos.length;
+  phSetPhoto(next);
+}
+
+function openPhotoLightbox(){
+  const lb  = document.getElementById('ph-lightbox');
+  const img = document.getElementById('ph-lb-img');
+  if(!lb || !img || !phPhotos.length) return;
+  img.src = phPhotos[phCurrentIndex];
+  lb.classList.add('show');
+}
+
+function closePhotoLightbox(e){
+  if(e && e.currentTarget !== e.target) return; // only close on backdrop click
+  const lb = document.getElementById('ph-lightbox');
+  if(lb) lb.classList.remove('show');
+}
+
+function renderPhotoGrid(key){
+  const s = seriesData[key]; if(!s) return '';
+  const folder = productPhotoFolder[key]; if(!folder) return '';
+  const ext = productPhotoExt[key] || '.jpg';
+  const base = `images/photos/${folder}/`;
+  phPhotos = [1,2,3,4,5,6].map(n => `${base}${n}${ext}`);
+  phCurrentIndex = 0;
+  const thumbs = phPhotos.map((src,i) =>
+    `<div class="ph-thumb${i===0?' active':''}" onclick="phSetPhoto(${i})">
+       <img src="${src}" alt="${s.name} ${i+1}" loading="lazy">
+     </div>`
+  ).join('');
+  return `
+    <div class="po-product-sub" style="margin-bottom:2px">${s.series}</div>
+    <div class="po-product-name" style="margin-bottom:10px">${s.name}</div>
+    <div class="ph-hero-wrap">
+      <img class="ph-hero" id="ph-hero" src="${phPhotos[0]}" alt="${s.name}">
+      <div class="ph-hero-counter" id="ph-counter">1 / ${phPhotos.length}</div>
+    </div>
+    <button class="ph-expand-btn" onclick="openPhotoLightbox()">&#8599; Expand Image</button>
+    <div class="ph-strip-row">
+      <button class="ph-arrow" onclick="phNav(-1)">&#8592;</button>
+      <div class="ph-strip" id="ph-strip">${thumbs}</div>
+      <button class="ph-arrow" onclick="phNav(1)">&#8594;</button>
+    </div>`;
+}
+
+function render3DView(key){
+  const s = seriesData[key]; if(!s) return '';
+  return `
+    <div class="md-name-row">
+      <div class="po-product-sub" style="margin-bottom:2px">${s.series}</div>
+      <div class="po-product-name">Crystal Prompter ${s.name}</div>
+    </div>
+    <div class="md-viewer" id="md-viewer-el">
+      <div class="cube" id="cube">
+        <div class="face fr"></div>
+        <div class="face bk"></div>
+        <div class="face lt"></div>
+        <div class="face rt"></div>
+        <div class="face tp"></div>
+        <div class="face bt"></div>
+      </div>
+      <div class="md-label">${s.name.toUpperCase()} · 3D PREVIEW</div>
+    </div>
+    <button class="md-fullbtn" onclick="open3DModal('${s.name.toUpperCase()} · 3D PREVIEW')">&#8599; Expand 3D View</button>`;
+}
+
+function renderPricingCard(key){
+  const s = seriesData[key]; if(!s) return '';
+  const price = productPrice[key] || 'Contact for Pricing';
+  return `
+    <div class="pr-card">
+      <div class="pr-series">${s.series}</div>
+      <div class="pr-name">Crystal Prompter ${s.name}</div>
+      <img class="pr-img" src="${s.img}" alt="${s.name}" loading="lazy">
+      <div class="pr-price-block">
+        <div class="pr-price-label">Price</div>
+        <div class="pr-price">${price}</div>
+      </div>
+      <p class="pr-note">Final price may vary depending on configuration.</p>
+      <button class="ph-expand-btn pr-cta">Request Quote</button>
+    </div>`;
+}
+
+function open3DModal(label){
+  const lb  = document.getElementById('md-lightbox');
+  const lbl = document.getElementById('md-lb-label');
+  if(!lb) return;
+  if(lbl && label) lbl.textContent = label;
+  lb.classList.add('show');
+}
+
+function close3DModal(e){
+  if(e && e.currentTarget !== e.target) return;
+  const lb = document.getElementById('md-lightbox');
+  if(lb) lb.classList.remove('show');
+}
+
+function openProductMode(key, mode){
+  selectedMode = null;
+  const _prompt = document.getElementById('tb-prompt');
+  if(_prompt) _prompt.classList.remove('show');
+  if(mode === 'photos'){
+    openTab('photos', true);
+    const ph = document.getElementById('ct-photos');
+    if(ph){ ph.innerHTML = renderPhotoGrid(key); ph.scrollTop = 0; }
+  }
+  else if(mode === 'videos'){
+    openTab('slides');
+    const vidId = productVideoId[key];
+    if(vidId){ setTimeout(()=>{
+      const prodCat = document.querySelector('#ct-slides .wv-category:last-of-type');
+      if(prodCat && !prodCat.classList.contains('open')) prodCat.classList.add('open');
+      const btn = document.querySelector(`[onclick="playVideo('${vidId}')"]`);
+      if(btn) btn.click();
+    }, 50); }
+  }
+  else if(mode === '3d'){
+    openTab('videos', true);
+    const el3d = document.getElementById('ct-videos');
+    if(el3d){ el3d.innerHTML = render3DView(key); el3d.scrollTop = 0; }
+  }
+  else if(mode === 'pricing'){
+    openTab('model', true);
+    const pm = document.getElementById('ct-model');
+    if(pm){ pm.innerHTML = renderPricingCard(key); pm.scrollTop = 0; }
+  }
+  else if(mode === 'contact'){
+    openTab('contact');
+    const s = seriesData[key];
+    setTimeout(()=>{
+      const msgField = document.getElementById('cf-msg');
+      if(msgField && s) msgField.value = `I'm interested in the ${s.name}. Please share pricing and availability.`;
+    }, 50);
+  }
 }
 
 function selectSeries(btn, id){
@@ -1318,6 +1705,167 @@ function selectSeries(btn, id){
   btn.classList.add('active');
   const det = document.getElementById('po-detail');
   if(det){ det.innerHTML = renderPoDetail(id); det.scrollTop = 0; }
+}
+
+// ════════════════════════════════════════════
+//  Bottom nav — conversation-first mode
+// ════════════════════════════════════════════
+let selectedMode = null;
+
+const navMessages = {
+  explore: "We offer several Crystal Prompter products. Let me know which one you're interested in.",
+  photos:  "Tell me the product name, and I'll show you the available photos.",
+  videos:  "Which product's introduction video would you like to watch?",
+  '3d':    "Just share the product name, and I'll open the 3D view for you.",
+  pricing: "Let me know the product you're considering, and I'll provide the pricing details.",
+  contact: "If you already have a product in mind, tell me which one so I can connect you with our sales team."
+};
+
+const navIcons = {
+  explore: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  photos:  '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+  videos:  '<circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="var(--teal)" stroke="none"/>',
+  '3d':    '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  pricing: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+  contact: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.71 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.91.35 1.85.58 2.81.71A2 2 0 0 1 21.5 16.1z"/>'
+};
+
+// Maps typed product names → seriesData keys
+const productAliases = {
+  'tab 12':'tab12',     'tab12':'tab12',    'tab':'tab12',
+  'flex 15':'flex15',   'flex15':'flex15',  'flex':'flex15',
+  'clone 16':'clone16', 'clone16':'clone16','clone':'clone16',
+  'spot 18':'spot18',   'spot18':'spot18',  'spot':'spot18',
+  'folder 22n':'folder22n','folder22n':'folder22n','folder 22':'folder22n','folder':'folder22n',
+  'cue 24':'cue24',   'cue24':'cue24',
+  'cue 27':'cue27',   'cue27':'cue27',
+  'cue 32':'cue32',   'cue32':'cue32',   'cue':'cue32',
+  'framer 24':'framer24','framer24':'framer24',
+  'framer 27':'framer27','framer27':'framer27',
+  'framer 32':'framer32','framer32':'framer32','framer':'framer27',
+  'mime 24':'mime24', 'mime24':'mime24',
+  'mime 27':'mime27', 'mime27':'mime27',
+  'mime 32':'mime32', 'mime32':'mime32', 'mime':'mime24',
+};
+
+// Maps seriesData key → product price (update with real prices)
+const productPrice = {
+  tab12:'Contact for Pricing',   flex15:'Contact for Pricing',   clone16:'Contact for Pricing',
+  spot18:'Contact for Pricing',  folder22n:'Contact for Pricing',
+  cue24:'Contact for Pricing',   cue27:'Contact for Pricing',    cue32:'Contact for Pricing',
+  framer24:'Contact for Pricing',framer27:'Contact for Pricing', framer32:'Contact for Pricing',
+  mime24:'Contact for Pricing',  mime27:'Contact for Pricing',   mime32:'Contact for Pricing',
+};
+
+// Maps seriesData key → photo folder name
+const productPhotoFolder = {
+  tab12:'tab-12',       flex15:'flex-15',     clone16:'clone-16',
+  spot18:'spot-18',     folder22n:'folder-22n',
+  cue24:'cue-24',       cue27:'cue-27',       cue32:'cue-32',
+  framer24:'framer-24', framer27:'framer-27', framer32:'framer-32',
+};
+
+// Maps seriesData key → photo file extension (default .jpg)
+const productPhotoExt = {
+  cue32: '.png',
+};
+
+// Maps seriesData key → videos{} key
+const productVideoId = {
+  flex15:'prod-flex15', clone16:'prod-clone16', spot18:'prod-spot18',
+  cue24:'prod-cue24',   cue27:'prod-cue27',     cue32:'prod-cue32',
+  framer24:'prod-framer24', framer27:'prod-framer27',
+};
+
+function resolveProduct(query) {
+  // Normalize: lowercase, collapse hyphens/underscores/dots to spaces, collapse spaces
+  const q = query.toLowerCase().replace(/[-_\.]+/g,' ').replace(/\s+/g,' ').trim();
+  // Also try without spaces (e.g. "framer24")
+  const qNoSpace = q.replace(/\s/g,'');
+  for(const [alias, key] of Object.entries(productAliases)){
+    if(q.includes(alias) || qNoSpace.includes(alias.replace(/\s/g,''))) return key;
+  }
+  return null;
+}
+
+function handleNavClick(mode, btn) {
+  selectedMode = mode;
+  playAvatarVideo(mode);
+  // Deactivate all, then activate clicked button
+  document.querySelectorAll('.tb-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected','false');
+  });
+  if(btn){ btn.classList.add('active'); btn.setAttribute('aria-selected','true'); }
+  document.querySelectorAll('.tb-content').forEach(c => {
+    c.classList.remove('active');
+    c.innerHTML = originals[c.id];
+  });
+  // Show centered prompt
+  const prompt = document.getElementById('tb-prompt');
+  const iconEl = document.getElementById('tb-prompt-icon');
+  if(iconEl) iconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">${navIcons[mode]||''}</svg>`;
+  document.getElementById('tb-prompt-text').textContent = navMessages[mode];
+  document.getElementById('tb-prompt-hint').style.display = '';
+  document.getElementById('tb-prompt-error').style.display = 'none';
+  prompt.setAttribute('data-mode', mode);
+  prompt.classList.add('show');
+  // Focus input
+  document.getElementById('msg').focus();
+}
+
+function handleModeResponse(query) {
+  const key = resolveProduct(query);
+  if(!key){
+    document.getElementById('tb-prompt-error').textContent =
+      'Product not found. Try: Tab 12, Flex 15, Clone 16, Spot 18, Folder 22N, Cue 24/27/32, Framer 24/27/32, or Mime 24/27/32.';
+    document.getElementById('tb-prompt-error').style.display = 'block';
+    document.getElementById('msg').focus();
+    return; // keep mode active
+  }
+  const mode = selectedMode;
+  selectedMode = null;
+  document.getElementById('tb-prompt').classList.remove('show');
+
+  if(mode === 'explore'){
+    openTab('text', true);
+    const det = document.getElementById('po-detail');
+    if(det){ det.innerHTML = renderPoDetail(key); det.scrollTop = 0; }
+    selectedMode = 'explore'; // keep mode active so user can search another product
+
+  } else if(mode === 'photos'){
+    openTab('photos', true);
+    const ph = document.getElementById('ct-photos');
+    if(ph){ ph.innerHTML = renderPhotoGrid(key); ph.scrollTop = 0; }
+    selectedMode = 'photos'; // keep mode active for next search
+
+  } else if(mode === 'videos'){
+    openTab('slides', true);
+    const el = document.getElementById('ct-slides');
+    if(el){ el.style.overflow = 'hidden'; el.innerHTML = renderVideoCard(key); el.scrollTop = 0; }
+    selectedMode = 'videos'; // keep mode active for next search
+
+  } else if(mode === '3d'){
+    openTab('videos', true);
+    const el3d = document.getElementById('ct-videos');
+    if(el3d){ el3d.innerHTML = render3DView(key); el3d.scrollTop = 0; }
+    selectedMode = '3d'; // keep mode active for next search
+
+  } else if(mode === 'pricing'){
+    openTab('model', true);
+    const pm = document.getElementById('ct-model');
+    if(pm){ pm.innerHTML = renderPricingCard(key); pm.scrollTop = 0; }
+    selectedMode = 'pricing'; // keep mode active for next search
+
+  } else if(mode === 'contact'){
+    openTab('contact');
+    // Pre-fill message with product reference
+    const s = seriesData[key];
+    setTimeout(()=>{
+      const msgField = document.getElementById('cf-msg');
+      if(msgField && s) msgField.value = `I'm interested in the ${s.name}. Please share pricing and availability.`;
+    }, 50);
+  }
 }
 
 // ════════════════════════════════════════════
@@ -1330,6 +1878,11 @@ document.querySelectorAll('.tb-content').forEach(el => {
 });
 
 function openTab(name, preserveContent) {
+  // Hide centered prompt whenever a tab opens directly
+  const _prompt = document.getElementById('tb-prompt');
+  if(_prompt) _prompt.classList.remove('show');
+  if(!preserveContent) selectedMode = null;
+
   // Deactivate all buttons + restore all content (unless chip is injecting)
   document.querySelectorAll('.tb-btn').forEach(b => {
     b.classList.remove('active');
@@ -1337,7 +1890,7 @@ function openTab(name, preserveContent) {
   });
   document.querySelectorAll('.tb-content').forEach(c => {
     c.classList.remove('active');
-    if (!preserveContent) c.innerHTML = originals[c.id];
+    if (!preserveContent){ c.innerHTML = originals[c.id]; c.style.overflow = ''; }
   });
 
   // Activate chosen tab
@@ -1350,11 +1903,6 @@ function openTab(name, preserveContent) {
   if (!preserveContent && name === 'slides') {
     currentSlide = 1;
     updateSlideCounter();
-  }
-  // Reset cube rotation state when restoring model tab
-  if (!preserveContent && name === 'model') {
-    rotating = true;
-    // pauseBtn is part of restored HTML — no need to update externally
   }
 }
 
@@ -1377,18 +1925,6 @@ function updateSlideCounter() {
 }
 function prevSlide() { showSlide(currentSlide - 1); }
 function nextSlide() { showSlide(currentSlide + 1); }
-
-// ════════════════════════════════════════════
-//  3D cube pause / resume
-// ════════════════════════════════════════════
-let rotating = true;
-function toggleRotation() {
-  rotating = !rotating;
-  const cube = document.getElementById('cube');
-  const btn  = document.getElementById('pauseBtn');
-  if (cube) cube.style.animationPlayState = rotating ? 'running' : 'paused';
-  if (btn)  btn.textContent = rotating ? '⏸ Pause' : '▶ Resume';
-}
 
 // ════════════════════════════════════════════
 //  Quick chip actions — each opens a tab
@@ -1517,8 +2053,23 @@ function send() {
   const el  = document.getElementById('msg');
   const val = el.value.trim();
   if (!val) return;
-  openTab(matchTab(val));
   el.value = '';
+  // If a nav mode is active, resolve product and load content
+  if(selectedMode){
+    handleModeResponse(val);
+    return;
+  }
+  // Try product name match first (works even without clicking Explore Products)
+  const directKey = resolveProduct(val);
+  if(directKey){
+    openTab('text', true);
+    const det = document.getElementById('po-detail');
+    if(det){ det.innerHTML = renderPoDetail(directKey); det.scrollTop = 0; }
+    selectedMode = 'explore';
+    return;
+  }
+  // Default keyword routing
+  openTab(matchTab(val));
 }
 
 // ── Close on Escape key ──────────────────
